@@ -1,0 +1,21 @@
+# No external dependencies required
+# This project uses only Python standard library
+
+# Python Version
+# Python >= 3.7
+
+# Standard Library Modules Used:
+# - hashlib (for SHA-256 hashing)
+# - hmac (for message authentication)
+# - json (for blockchain serialization)
+# - random (for cryptographic randomness)
+# - os (for random bytes generation)
+# - datetime (for timestamps)
+
+# Installation:
+# No pip install required!
+# Just run: python main.py
+
+# Optional (for development):
+# pytest>=7.0.0  # For unit testing (if you want to add tests)
+# black>=22.0.0  # For code formatting (optional)
