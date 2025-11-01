@@ -519,7 +519,3 @@ def main():
     finally:
         if client.connected:
             client.disconnect()
-
-
-if __name__ == "__main__":
-    main()

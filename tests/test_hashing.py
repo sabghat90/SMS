@@ -111,7 +111,3 @@ class TestMessageIntegrity(unittest.TestCase):
         hash2 = self.integrity.hash_message(message2)
         
         self.assertNotEqual(hash1, hash2)
-
-
-if __name__ == "__main__":
-    unittest.main()

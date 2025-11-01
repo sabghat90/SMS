@@ -109,38 +109,3 @@ class VigenereCipher:
                 plaintext += char
         
         return plaintext
-
-
-# Testing
-if __name__ == "__main__":
-    print("=== Classical Ciphers Module Tests ===\n")
-    
-    # Test Caesar Cipher
-    print("1. Caesar Cipher (shift=3):")
-    caesar = CaesarCipher(shift=3)
-    plaintext = "Hello World"
-    encrypted = caesar.encrypt(plaintext)
-    decrypted = caesar.decrypt(encrypted)
-    print(f"   Plaintext:  {plaintext}")
-    print(f"   Encrypted:  {encrypted}")
-    print(f"   Decrypted:  {decrypted}\n")
-    
-    # Test Vigenère Cipher
-    print("2. Vigenère Cipher (key='SECRET'):")
-    vigenere = VigenereCipher(key="SECRET")
-    plaintext = "Attack at Dawn"
-    encrypted = vigenere.encrypt(plaintext)
-    decrypted = vigenere.decrypt(encrypted)
-    print(f"   Plaintext:  {plaintext}")
-    print(f"   Encrypted:  {encrypted}")
-    print(f"   Decrypted:  {decrypted}\n")
-    
-    # Test with different key
-    print("3. Vigenère Cipher (key='KEY'):")
-    vigenere2 = VigenereCipher(key="KEY")
-    plaintext = "CRYPTOGRAPHY"
-    encrypted = vigenere2.encrypt(plaintext)
-    decrypted = vigenere2.decrypt(encrypted)
-    print(f"   Plaintext:  {plaintext}")
-    print(f"   Encrypted:  {encrypted}")
-    print(f"   Decrypted:  {decrypted}\n")

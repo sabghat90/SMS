@@ -78,16 +78,46 @@ class MessageBlockchain:
     Provides immutability and non-repudiation
     """
     
-    def __init__(self, difficulty=2):
+    def __init__(self, difficulty=2, storage=None):
         """
         Initialize blockchain with genesis block
         
         Args:
             difficulty: Mining difficulty (number of leading zeros)
+            storage: SecureStorage instance for temporary persistence
         """
         self.chain = []
         self.difficulty = difficulty
+        self.storage = storage
+        
+        # Try to load existing blockchain from temp storage
+        if self.storage:
+            loaded_chain = self.storage.load_blockchain_temp()
+            if loaded_chain:
+                self._restore_from_dict(loaded_chain)
+                return
+        
+        # Create new blockchain if no stored data
         self.create_genesis_block()
+    
+    def _restore_from_dict(self, chain_data):
+        """Restore blockchain from dictionary data"""
+        for block_data in chain_data:
+            block = Block(
+                index=block_data['index'],
+                timestamp=block_data['timestamp'],
+                data=block_data['data'],
+                previous_hash=block_data['previous_hash']
+            )
+            block.nonce = block_data['nonce']
+            block.hash = block_data['hash']
+            self.chain.append(block)
+    
+    def _save_to_storage(self):
+        """Save blockchain to temporary storage"""
+        if self.storage:
+            chain_data = [block.to_dict() for block in self.chain]
+            self.storage.save_blockchain_temp(chain_data)
     
     def create_genesis_block(self):
         """Create the first block in the chain"""
@@ -143,6 +173,9 @@ class MessageBlockchain:
         
         # Add to chain
         self.chain.append(new_block)
+        
+        # Save to temporary storage
+        self._save_to_storage()
         
         return new_block
     
@@ -213,53 +246,3 @@ class MessageBlockchain:
     def export_chain(self):
         """Export blockchain to JSON format"""
         return json.dumps([block.to_dict() for block in self.chain], indent=2)
-
-
-# Testing
-if __name__ == "__main__":
-    print("=== Blockchain Module Tests ===\n")
-    
-    # Create blockchain
-    print("1. Creating Blockchain:")
-    blockchain = MessageBlockchain(difficulty=2)
-    print(f"   Genesis block created")
-    print(f"   Genesis hash: {blockchain.get_latest_block().hash}\n")
-    
-    # Add message blocks
-    print("2. Adding Message Blocks:")
-    block1 = blockchain.add_message_block(
-        sender="alice",
-        receiver="bob",
-        ciphertext="a8f5c2d1e9b4...",
-        message_hash="9b871c6d...",
-        encryption_method="Caesar Cipher"
-    )
-    print(f"   Block 1 added - Hash: {block1.hash}")
-    
-    block2 = blockchain.add_message_block(
-        sender="bob",
-        receiver="alice",
-        ciphertext="3e7f2a1c8d...",
-        message_hash="4a6b8e2f...",
-        encryption_method="XOR Stream Cipher"
-    )
-    print(f"   Block 2 added - Hash: {block2.hash}\n")
-    
-    # Verify blockchain
-    print("3. Blockchain Validation:")
-    is_valid, message = blockchain.is_chain_valid()
-    print(f"   Valid: {is_valid}")
-    print(f"   Message: {message}\n")
-    
-    # Get user messages
-    print("4. Retrieve Alice's Messages:")
-    alice_messages = blockchain.get_messages_for_user("alice")
-    print(f"   Alice has {len(alice_messages)} message(s)")
-    for block in alice_messages:
-        print(f"   - Block {block.index}: {block.data['sender']} -> {block.data['receiver']}")
-    print()
-    
-    # Display chain
-    print("5. Blockchain Summary:")
-    print(f"   Total blocks: {blockchain.get_chain_length()}")
-    print(f"   Latest block index: {blockchain.get_latest_block().index}\n")

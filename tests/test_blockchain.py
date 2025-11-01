@@ -135,7 +135,3 @@ class TestMessageBlockchain(unittest.TestCase):
         self.assertEqual(len(self.blockchain.chain), 6)
         # Verify chain integrity
         self.assertTrue(self.blockchain.is_chain_valid())
-
-
-if __name__ == "__main__":
-    unittest.main()

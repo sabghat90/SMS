@@ -193,29 +193,3 @@ class MiniBlockCipher:
         """Return key in hexadecimal format"""
         return self.key.hex()
 
-
-# Testing
-if __name__ == "__main__":
-    print("=== Modern Ciphers Module Tests ===\n")
-    
-    # Test XOR Stream Cipher
-    print("1. XOR Stream Cipher:")
-    xor_cipher = XORStreamCipher(key="SECRETKEY")
-    plaintext = "Hello, this is a secret message!"
-    encrypted = xor_cipher.encrypt(plaintext)
-    decrypted = xor_cipher.decrypt(encrypted)
-    print(f"   Plaintext:  {plaintext}")
-    print(f"   Encrypted:  {encrypted}")
-    print(f"   Decrypted:  {decrypted}")
-    print(f"   Key (hex):  {xor_cipher.get_key_hex()}\n")
-    
-    # Test Mini Block Cipher
-    print("2. Mini Block Cipher:")
-    block_cipher = MiniBlockCipher(key="BLOCKKEY")
-    plaintext = "Confidential Data"
-    encrypted = block_cipher.encrypt(plaintext)
-    decrypted = block_cipher.decrypt(encrypted)
-    print(f"   Plaintext:  {plaintext}")
-    print(f"   Encrypted:  {encrypted}")
-    print(f"   Decrypted:  {decrypted}")
-    print(f"   Key (hex):  {block_cipher.get_key_hex()}\n")

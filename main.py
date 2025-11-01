@@ -9,6 +9,7 @@ This application demonstrates:
 - Hashing & Integrity (Lab 06)
 - Blockchain (Lab 07)
 - ElGamal & Key Distribution (Lab 09 & 11)
+- Secure Data Storage (Persistent user data with encryption)
 """
 
 import os
@@ -18,7 +19,8 @@ from src.core.classical_ciphers import CaesarCipher, VigenereCipher
 from src.core.modern_ciphers import XORStreamCipher, MiniBlockCipher
 from src.core.hashing import MessageIntegrity
 from src.core.blockchain import MessageBlockchain
-from src.core.elgamal import ElGamal, KeyDistributionCenter
+from src.core.elgamal import ElGamal, KeyDistributionCenter, ElGamalKeyPair
+from src.core.storage import SecureStorage
 
 
 class SecureMessagingSystem:
@@ -27,13 +29,32 @@ class SecureMessagingSystem:
     """
     
     def __init__(self):
-        # Initialize all components
-        self.auth = UserAuthentication()
+        # Initialize secure storage
+        self.storage = SecureStorage(data_dir="data")
+        
+        # Initialize all components with storage
+        self.auth = UserAuthentication(storage=self.storage)
         self.kdc = KeyDistributionCenter()
-        self.blockchain = MessageBlockchain(difficulty=2)
+        self.blockchain = MessageBlockchain(difficulty=2, storage=self.storage)
         self.current_session = None
         self.current_username = None
-        self.user_keys = {}  # Store ElGamal keys for each user
+        
+        # Load existing user keys from storage
+        self.user_keys = {}
+        stored_keys = self.storage.load_user_keys()
+        
+        # Convert stored key dictionaries back to ElGamalKeyPair objects
+        for username, key_data in stored_keys.items():
+            if isinstance(key_data, dict):
+                key_obj = ElGamalKeyPair(
+                    p=key_data['p'],
+                    g=key_data['g'],
+                    private_key=key_data['private_key'],
+                    public_key=key_data['public_key']
+                )
+                self.user_keys[username] = key_obj
+                # Register with KDC
+                self.kdc.register_user(username, key_obj)
     
     def display_banner(self):
         """Display application banner"""
@@ -51,13 +72,15 @@ class SecureMessagingSystem:
             print("2. View My Messages")
             print("3. View Blockchain")
             print("4. Verify Blockchain Integrity")
-            print("5. Logout")
-            print("6. Exit")
+            print("5. Storage Information")
+            print("6. Logout")
+            print("7. Exit")
         else:
             print("\n--- MAIN MENU ---")
             print("1. Register")
             print("2. Login")
-            print("3. Exit")
+            print("3. Storage Information")
+            print("4. Exit")
     
     def register(self):
         """User registration"""
@@ -77,7 +100,12 @@ class SecureMessagingSystem:
             
             # Register public key with KDC
             self.kdc.register_user(username, key_pair)
+            
+            # Save keys to secure storage
+            self.storage.save_user_keys(self.user_keys)
+            
             print(f"✓ Public key registered with Key Distribution Center")
+            print(f"✓ User data saved securely")
             print(f"  - Prime (p): {key_pair.p}")
             print(f"  - Generator (g): {key_pair.g}")
             print(f"  - Public key (y): {key_pair.public_key}")
@@ -316,11 +344,35 @@ class SecureMessagingSystem:
             print(f"\n✗ {message}")
             print("  Chain integrity: COMPROMISED")
     
+    def show_storage_info(self):
+        """Display storage information"""
+        print("\n--- STORAGE INFORMATION ---")
+        info = self.storage.get_storage_info()
+        
+        print(f"\nData Directory: {info['data_directory']}")
+        print(f"Encryption Enabled: {'Yes' if info['encryption_enabled'] else 'No'}")
+        print(f"\nStored Files:")
+        print(f"  - User Data (encrypted): {'✓' if info['users_file_exists'] else '✗'}")
+        if info['users_file_exists']:
+            print(f"    Size: {info.get('users_file_size', 0)} bytes")
+        
+        print(f"  - User Keys (encrypted): {'✓' if info['keys_file_exists'] else '✗'}")
+        
+        print(f"  - Blockchain (temporary): {'✓' if info['blockchain_file_exists'] else '✗'}")
+        if info['blockchain_file_exists']:
+            print(f"    Size: {info.get('blockchain_file_size', 0)} bytes")
+            print(f"    Last Modified: {info.get('blockchain_file_modified', 'N/A')}")
+        
+        print(f"\nTotal Users: {len(self.auth.users)}")
+        print(f"Blockchain Blocks: {self.blockchain.get_chain_length()}")
+        print("\nNote: User data is encrypted using Fernet (AES-128).")
+        print("Blockchain is stored temporarily and cleared on restart.")
+    
     def run(self):
         """Main application loop"""
         self.display_banner()
         
-        # Pre-register some test users for demo
+        # Pre-register some test users for demo (only if no users exist)
         self.setup_demo_users()
         
         while True:
@@ -334,6 +386,8 @@ class SecureMessagingSystem:
                 elif choice == "2":
                     self.login()
                 elif choice == "3":
+                    self.show_storage_info()
+                elif choice == "4":
                     print("\nExiting system. Goodbye!")
                     break
                 else:
@@ -349,8 +403,10 @@ class SecureMessagingSystem:
                 elif choice == "4":
                     self.verify_blockchain()
                 elif choice == "5":
-                    self.logout()
+                    self.show_storage_info()
                 elif choice == "6":
+                    self.logout()
+                elif choice == "7":
                     self.logout()
                     print("\nExiting system. Goodbye!")
                     break
@@ -359,6 +415,11 @@ class SecureMessagingSystem:
     
     def setup_demo_users(self):
         """Setup demo users for testing"""
+        # Only setup demo users if no users exist
+        if len(self.auth.users) > 0:
+            print("Found existing users in storage. Skipping demo setup.")
+            return
+        
         demo_users = [
             ("alice", "alice123", "alice@example.com"),
             ("bob", "bob123", "bob@example.com"),
@@ -373,6 +434,10 @@ class SecureMessagingSystem:
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
                 print(f"  ✓ Demo user '{username}' registered (password: {password})")
+        
+        # Save all demo user keys
+        if self.user_keys:
+            self.storage.save_user_keys(self.user_keys)
 
 
 def main():
@@ -386,7 +451,3 @@ def main():
         print(f"\n\nError: {e}")
         import traceback
         traceback.print_exc()
-
-
-if __name__ == "__main__":
-    main()

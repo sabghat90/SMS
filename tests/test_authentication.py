@@ -87,7 +87,3 @@ class TestUserAuthentication(unittest.TestCase):
         self.assertTrue(self.auth.login("user1", "pass1"))
         self.assertTrue(self.auth.login("user2", "pass2"))
         self.assertTrue(self.auth.login("user3", "pass3"))
-
-
-if __name__ == "__main__":
-    unittest.main()

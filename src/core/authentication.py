@@ -11,16 +11,27 @@ from datetime import datetime
 class UserAuthentication:
     """Manages user registration and authentication"""
     
-    def __init__(self):
+    def __init__(self, storage=None):
         # Dictionary to store user credentials
         # Format: {username: {'password_hash': hash, 'created_at': timestamp, 'email': email}}
         self.users = {}
         # Dictionary to store active sessions
         self.active_sessions = {}
+        # Secure storage instance
+        self.storage = storage
+        
+        # Load existing users from storage if available
+        if self.storage:
+            self.users = self.storage.load_users()
     
     def _hash_password(self, password):
         """Hash password using SHA-256 for secure storage"""
         return hashlib.sha256(password.encode()).hexdigest()
+    
+    def _save_users(self):
+        """Save users to storage if available"""
+        if self.storage:
+            self.storage.save_users(self.users)
     
     def register_user(self, username, password, email=""):
         """
@@ -44,6 +55,9 @@ class UserAuthentication:
             'email': email,
             'login_count': 0
         }
+        
+        # Save to persistent storage
+        self._save_users()
         
         return True, f"User '{username}' registered successfully!"
     
@@ -70,6 +84,9 @@ class UserAuthentication:
         
         # Update login count
         self.users[username]['login_count'] += 1
+        
+        # Save to persistent storage
+        self._save_users()
         
         return True, f"Login successful! Session ID: {session_id}"
     
@@ -119,41 +136,8 @@ class UserAuthentication:
         
         # Update password
         self.users[username]['password_hash'] = self._hash_password(new_password)
+        
+        # Save to persistent storage
+        self._save_users()
+        
         return True, "Password changed successfully"
-
-
-# Testing
-if __name__ == "__main__":
-    print("=== User Authentication Module Tests ===\n")
-    
-    auth = UserAuthentication()
-    
-    # Test Registration
-    print("1. User Registration:")
-    success, msg = auth.register_user("alice", "alice123", "alice@example.com")
-    print(f"   Register Alice: {msg}")
-    
-    success, msg = auth.register_user("bob", "bob123", "bob@example.com")
-    print(f"   Register Bob: {msg}")
-    
-    success, msg = auth.register_user("alice", "password")
-    print(f"   Duplicate Alice: {msg}\n")
-    
-    # Test Login
-    print("2. User Login:")
-    success, msg = auth.login("alice", "alice123")
-    print(f"   Alice login: {msg}")
-    if success:
-        alice_session = msg.split(": ")[1]
-    
-    success, msg = auth.login("bob", "wrongpass")
-    print(f"   Bob wrong password: {msg}\n")
-    
-    # Test User Info
-    print("3. User Information:")
-    info = auth.get_user_info("alice")
-    print(f"   Alice info: {info}\n")
-    
-    # Test List Users
-    print("4. List All Users:")
-    print(f"   Registered users: {auth.list_users()}\n")

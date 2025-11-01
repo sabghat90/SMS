@@ -47,3 +47,9 @@ htmlcov/
 *.db
 *.sqlite
 *.sqlite3
+
+# Data Storage (contains sensitive encrypted data)
+data/
+*.enc
+.key
+backups/

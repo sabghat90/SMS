@@ -13,7 +13,8 @@ from src.core.classical_ciphers import CaesarCipher, VigenereCipher
 from src.core.modern_ciphers import XORStreamCipher, MiniBlockCipher
 from src.core.hashing import MessageIntegrity
 from src.core.blockchain import MessageBlockchain
-from src.core.elgamal import ElGamal, KeyDistributionCenter
+from src.core.elgamal import ElGamal, KeyDistributionCenter, ElGamalKeyPair
+from src.core.storage import SecureStorage
 
 
 class MessageServer:
@@ -27,11 +28,30 @@ class MessageServer:
         self.server_socket = None
         self.running = False
         
-        # Initialize all components
-        self.auth = UserAuthentication()
+        # Initialize secure storage
+        self.storage = SecureStorage(data_dir="data")
+        
+        # Initialize all components with storage
+        self.auth = UserAuthentication(storage=self.storage)
         self.kdc = KeyDistributionCenter()
-        self.blockchain = MessageBlockchain(difficulty=2)
+        self.blockchain = MessageBlockchain(difficulty=2, storage=self.storage)
+        
+        # Load existing user keys from storage
         self.user_keys = {}
+        stored_keys = self.storage.load_user_keys()
+        
+        # Convert stored key dictionaries back to ElGamalKeyPair objects
+        for username, key_data in stored_keys.items():
+            if isinstance(key_data, dict):
+                key_obj = ElGamalKeyPair(
+                    p=key_data['p'],
+                    g=key_data['g'],
+                    private_key=key_data['private_key'],
+                    public_key=key_data['public_key']
+                )
+                self.user_keys[username] = key_obj
+                # Register with KDC
+                self.kdc.register_user(username, key_obj)
         
         # Track connected clients
         self.clients = {}  # {username: client_socket}
@@ -40,17 +60,23 @@ class MessageServer:
         # Thread lock for synchronized access
         self.lock = threading.Lock()
         
-        # Setup demo users
+        # Setup demo users (only if no users exist)
         self._setup_demo_users()
     
     def _setup_demo_users(self):
         """Setup demo users for testing"""
+        # Only setup demo users if no users exist
+        if len(self.auth.users) > 0:
+            print(f"Found {len(self.auth.users)} existing users in storage.")
+            return
+        
         demo_users = [
             ("alice", "alice123", "alice@example.com"),
             ("bob", "bob123", "bob@example.com"),
             ("charlie", "charlie123", "charlie@example.com"),
         ]
         
+        print("Setting up demo users...")
         for username, password, email in demo_users:
             success, _ = self.auth.register_user(username, password, email)
             if success:
@@ -59,6 +85,11 @@ class MessageServer:
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
                 print(f"  ✓ Demo user '{username}' registered")
+        
+        # Save all demo user keys
+        if self.user_keys:
+            self.storage.save_user_keys(self.user_keys)
+            print("✓ User keys saved to storage")
     
     def start(self):
         """Start the server"""
@@ -218,6 +249,8 @@ class MessageServer:
             with self.lock:
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
+                # Save keys to storage
+                self.storage.save_user_keys(self.user_keys)
             
             print(f"[{datetime.now().strftime('%H:%M:%S')}] New user registered: {username}")
             
@@ -424,7 +457,3 @@ def main():
         print(f"\nServer error: {e}")
     finally:
         server.stop()
-
-
-if __name__ == "__main__":
-    main()

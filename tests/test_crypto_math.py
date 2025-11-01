@@ -135,7 +135,3 @@ class TestCryptoMath(unittest.TestCase):
         
         result = power_mod(a, p - 1, p)
         self.assertEqual(result, 1)
-
-
-if __name__ == "__main__":
-    unittest.main()

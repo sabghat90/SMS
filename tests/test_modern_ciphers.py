@@ -141,7 +141,3 @@ class TestMiniBlockCipher(unittest.TestCase):
         decrypted = cipher.decrypt(encrypted, key)
         
         self.assertEqual(decrypted, plaintext)
-
-
-if __name__ == "__main__":
-    unittest.main()

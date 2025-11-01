@@ -1,20 +1,29 @@
-# No external dependencies required
-# This project uses only Python standard library
+# Dependencies for Secure Messaging System
+# ALL SECURITY IMPLEMENTATIONS USE LAB CONCEPTS ONLY
 
-# Python Version
+# NO external cryptography libraries required!
+# The project uses only concepts from Labs 01-11:
+# - Lab 05: XOR Stream Cipher & Mini Block Cipher (modern_ciphers.py)
+# - Lab 06: SHA-256 & HMAC (hashing.py)
+# - Lab 09: ElGamal & Crypto Math (elgamal.py, crypto_math.py)
+
+# Python Version Required:
 # Python >= 3.7
 
 # Standard Library Modules Used:
-# - hashlib (for SHA-256 hashing)
-# - hmac (for message authentication)
-# - json (for blockchain serialization)
-# - random (for cryptographic randomness)
-# - os (for random bytes generation)
-# - datetime (for timestamps)
+# - hashlib (for SHA-256 hashing - Lab 06)
+# - hmac (for message authentication - Lab 06)
+# - json (for blockchain serialization and data storage - Lab 07)
+# - random (for cryptographic randomness - Lab 09)
+# - os (for file operations and random bytes generation)
+# - datetime (for timestamps - Lab 07)
 
 # Installation:
-# No pip install required!
-# Just run: python main.py
+# No external packages needed! Just run:
+# python scripts/run_standalone.py
+# OR
+# python scripts/run_server.py
+# python scripts/run_client.py
 
 # Optional (for development):
 # pytest>=7.0.0  # For unit testing (if you want to add tests)

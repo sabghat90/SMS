@@ -140,35 +140,3 @@ def find_primitive_root(p):
             return g
     
     return None
-
-
-# Testing functions
-if __name__ == "__main__":
-    print("=== Cryptographic Math Module Tests ===\n")
-    
-    # Test GCD
-    print("1. GCD Tests:")
-    print(f"   gcd(48, 18) = {gcd(48, 18)}")
-    print(f"   gcd(100, 35) = {gcd(100, 35)}\n")
-    
-    # Test Modular Inverse
-    print("2. Modular Inverse Tests:")
-    print(f"   mod_inverse(3, 11) = {mod_inverse(3, 11)}")
-    print(f"   Verification: (3 * 4) mod 11 = {(3 * 4) % 11}\n")
-    
-    # Test Prime Generation
-    print("3. Prime Generation:")
-    prime = generate_prime(16)
-    print(f"   Generated 16-bit prime: {prime}")
-    print(f"   Is prime? {is_prime(prime)}\n")
-    
-    # Test Modular Exponentiation
-    print("4. Modular Exponentiation:")
-    result = power_mod(5, 13, 23)
-    print(f"   (5^13) mod 23 = {result}\n")
-    
-    # Test Primitive Root
-    print("5. Primitive Root:")
-    p = 23
-    g = find_primitive_root(p)
-    print(f"   Primitive root of {p}: {g}\n")

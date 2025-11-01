@@ -127,7 +127,3 @@ class TestVigenereCipher(unittest.TestCase):
         
         plaintext = "HELLO"
         self.assertEqual(vigenere.encrypt(plaintext), caesar.encrypt(plaintext))
-
-
-if __name__ == "__main__":
-    unittest.main()
