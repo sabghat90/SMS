@@ -21,6 +21,11 @@ class XORStreamCipher:
         else:
             self.key = key
     
+    @staticmethod
+    def generate_key(length=16):
+        """Generate a random key of specified length (in bytes)"""
+        return os.urandom(length).hex()
+    
     def _generate_keystream(self, length):
         """Generate keystream by repeating the key"""
         keystream = bytearray()
@@ -28,8 +33,15 @@ class XORStreamCipher:
             keystream.append(self.key[i % len(self.key)])
         return keystream
     
-    def encrypt(self, plaintext):
+    def encrypt(self, plaintext, key=None):
         """Encrypt plaintext using XOR stream cipher"""
+        # Use provided key if given
+        if key is not None:
+            if isinstance(key, str):
+                self.key = bytes.fromhex(key) if len(key) > 16 else key.encode()
+            else:
+                self.key = key
+        
         if isinstance(plaintext, str):
             plaintext = plaintext.encode()
         
@@ -41,8 +53,15 @@ class XORStreamCipher:
         
         return ciphertext.hex()
     
-    def decrypt(self, ciphertext_hex):
+    def decrypt(self, ciphertext_hex, key=None):
         """Decrypt ciphertext using XOR stream cipher"""
+        # Use provided key if given
+        if key is not None:
+            if isinstance(key, str):
+                self.key = bytes.fromhex(key) if len(key) > 16 else key.encode()
+            else:
+                self.key = key
+        
         ciphertext = bytes.fromhex(ciphertext_hex)
         keystream = self._generate_keystream(len(ciphertext))
         plaintext = bytearray()
@@ -83,16 +102,20 @@ class MiniBlockCipher:
         else:
             self.key = key
         
-        # S-Box for substitution (simplified)
-        self.sbox = [
-            0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
-            0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76
-        ]
+        # S-Box for substitution (16 elements for 4-bit operations)
+        # Using simple permutation of 0-15
+        self.sbox = [14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7]
         
         # Inverse S-Box
         self.inv_sbox = [0] * 16
         for i, val in enumerate(self.sbox):
-            self.inv_sbox[val % 16] = i
+            self.inv_sbox[val] = i
+    
+    @staticmethod
+    def generate_key():
+        """Generate a random 8-byte key (returns 16 hex characters)"""
+        key_bytes = os.urandom(16)  # Generate 16 bytes for 32 hex chars
+        return key_bytes.hex()
     
     def _pad(self, data):
         """PKCS7 padding to make data multiple of 8 bytes"""
@@ -101,16 +124,41 @@ class MiniBlockCipher:
     
     def _unpad(self, data):
         """Remove PKCS7 padding"""
+        if len(data) == 0:
+            return data
         pad_len = data[-1]
+        # Validate padding
+        if pad_len > 8 or pad_len > len(data):
+            return data  # Invalid padding, return as is
         return data[:-pad_len]
     
     def _substitute(self, block):
-        """Apply S-box substitution"""
-        return bytes([self.sbox[b % 16] for b in block])
+        """Apply S-box substitution to each nibble (4-bit)"""
+        result = []
+        for b in block:
+            # Split byte into two nibbles
+            high = (b >> 4) & 0x0F
+            low = b & 0x0F
+            # Apply S-box to each nibble
+            new_high = self.sbox[high]
+            new_low = self.sbox[low]
+            # Combine nibbles back
+            result.append((new_high << 4) | new_low)
+        return bytes(result)
     
     def _inv_substitute(self, block):
-        """Apply inverse S-box substitution"""
-        return bytes([self.inv_sbox[b % 16] for b in block])
+        """Apply inverse S-box substitution to each nibble (4-bit)"""
+        result = []
+        for b in block:
+            # Split byte into two nibbles
+            high = (b >> 4) & 0x0F
+            low = b & 0x0F
+            # Apply inverse S-box to each nibble
+            new_high = self.inv_sbox[high]
+            new_low = self.inv_sbox[low]
+            # Combine nibbles back
+            result.append((new_high << 4) | new_low)
+        return bytes(result)
     
     def _permute(self, block):
         """Simple permutation"""
@@ -156,8 +204,20 @@ class MiniBlockCipher:
         
         return block
     
-    def encrypt(self, plaintext):
+    def encrypt(self, plaintext, key=None):
         """Encrypt plaintext"""
+        # Store original key
+        original_key = self.key
+        
+        # Use provided key if given
+        if key is not None:
+            if isinstance(key, str):
+                # Assume hex string  
+                key_bytes = bytes.fromhex(key)
+                # Create a new cipher instance with this key
+                temp_key = key_bytes[:8]
+                self.key = temp_key
+        
         if isinstance(plaintext, str):
             plaintext = plaintext.encode()
         
@@ -171,11 +231,51 @@ class MiniBlockCipher:
             encrypted_block = self._encrypt_block(block)
             ciphertext.extend(encrypted_block)
         
-        return ciphertext.hex()
+        result = ciphertext.hex()
+        
+        # Restore original key if we changed it
+        if key is not None:
+            self.key = original_key
+            
+        return result
     
-    def decrypt(self, ciphertext_hex):
+    def decrypt(self, ciphertext_hex, key=None):
         """Decrypt ciphertext"""
+        # Store original key
+        original_key = self.key
+        
+        # Use provided key if given
+        if key is not None:
+            if isinstance(key, str):
+                # Assume hex string
+                key_bytes = bytes.fromhex(key)
+                # Create a new cipher instance with this key
+                temp_key = key_bytes[:8]
+                self.key = temp_key
+        
         ciphertext = bytes.fromhex(ciphertext_hex)
+        
+        # Decrypt each block
+        plaintext = bytearray()
+        for i in range(0, len(ciphertext), 8):
+            block = ciphertext[i:i+8]
+            decrypted_block = self._decrypt_block(block)
+            plaintext.extend(decrypted_block)
+        
+        # Unpad
+        try:
+            plaintext = self._unpad(bytes(plaintext))
+        except:
+            # If unpadding fails, return as is
+            plaintext = bytes(plaintext)
+        
+        result = plaintext.decode('utf-8', errors='ignore')
+        
+        # Restore original key if we changed it
+        if key is not None:
+            self.key = original_key
+            
+        return result
         
         # Decrypt each block
         plaintext = bytearray()

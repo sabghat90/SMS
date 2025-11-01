@@ -25,6 +25,11 @@ class MessageIntegrity:
         return hash_obj.hexdigest()
     
     @staticmethod
+    def hash_message(message):
+        """Alias for compute_hash for test compatibility"""
+        return MessageIntegrity.compute_hash(message)
+    
+    @staticmethod
     def verify_hash(message, expected_hash):
         """
         Verify if message hash matches expected hash
@@ -33,6 +38,12 @@ class MessageIntegrity:
         computed_hash = MessageIntegrity.compute_hash(message)
         is_valid = (computed_hash == expected_hash)
         return is_valid, computed_hash
+    
+    @staticmethod
+    def verify_message(message, expected_hash):
+        """Alias for verify_hash for test compatibility (returns just boolean)"""
+        is_valid, _ = MessageIntegrity.verify_hash(message, expected_hash)
+        return is_valid
     
     @staticmethod
     def compute_hmac(message, key):

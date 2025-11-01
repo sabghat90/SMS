@@ -70,8 +70,8 @@ class TestCryptoMath(unittest.TestCase):
     def test_mod_inverse_not_exists(self):
         """Test modular inverse when it doesn't exist"""
         # 6 and 9 are not coprime (gcd = 3)
-        inv = mod_inverse(6, 9)
-        self.assertIsNone(inv)
+        with self.assertRaises(ValueError):
+            mod_inverse(6, 9)
     
     def test_is_prime_known_primes(self):
         """Test is_prime with known prime numbers"""

@@ -14,13 +14,15 @@ class CaesarCipher:
         self.shift = shift
     
     def encrypt(self, plaintext):
-        """Encrypt plaintext using Caesar cipher"""
+        """Encrypt plaintext using Caesar cipher (converts to uppercase)"""
         ciphertext = ""
         
         for char in plaintext:
             if char.isalpha():
-                # Determine if uppercase or lowercase
-                ascii_offset = ord('A') if char.isupper() else ord('a')
+                # Convert to uppercase for consistency
+                char = char.upper()
+                # Use uppercase ASCII offset
+                ascii_offset = ord('A')
                 # Shift character
                 shifted = (ord(char) - ascii_offset + self.shift) % 26
                 ciphertext += chr(shifted + ascii_offset)

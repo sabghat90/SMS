@@ -179,6 +179,36 @@ class MessageBlockchain:
         
         return new_block
     
+    def add_block(self, data):
+        """
+        Add a generic block to the blockchain (for test compatibility)
+        
+        Args:
+            data: Dictionary containing block data
+        
+        Returns:
+            The newly created block
+        """
+        previous_block = self.get_latest_block()
+        
+        new_block = Block(
+            index=len(self.chain),
+            timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            data=data,
+            previous_hash=previous_block.hash
+        )
+        
+        # Mine the block
+        new_block.mine_block(self.difficulty)
+        
+        # Add to chain
+        self.chain.append(new_block)
+        
+        # Save to temporary storage
+        self._save_to_storage()
+        
+        return new_block
+    
     def is_chain_valid(self):
         """
         Verify the integrity of the entire blockchain
@@ -187,7 +217,7 @@ class MessageBlockchain:
         2. Each block correctly references previous block
         
         Returns:
-            (is_valid: bool, message: str)
+            bool for test compatibility (just validity status)
         """
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
@@ -195,13 +225,13 @@ class MessageBlockchain:
             
             # Verify current block's hash
             if current_block.hash != current_block.calculate_hash():
-                return False, f"Block {i} has invalid hash"
+                return False
             
             # Verify link to previous block
             if current_block.previous_hash != previous_block.hash:
-                return False, f"Block {i} has invalid previous hash"
+                return False
         
-        return True, "Blockchain is valid"
+        return True
     
     def get_messages_for_user(self, username):
         """
