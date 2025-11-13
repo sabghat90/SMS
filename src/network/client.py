@@ -134,7 +134,8 @@ class MessageClient:
                 
                 return True
             else:
-                print(f"\n{response.get('message', 'Login failed')}")
+                msg = response.get('message') if isinstance(response, dict) else 'Login failed'
+                print(f"\n{msg}")
                 return False
         
         return False
@@ -165,7 +166,8 @@ class MessageClient:
                     print(f"  - Public key: {response['key_info']['public_key']}")
                 return True
             else:
-                print(f"\n{response.get('message', 'Registration failed')}")
+                msg = response.get('message') if isinstance(response, dict) else 'Registration failed'
+                print(f"\n{msg}")
                 return False
         
         return False
@@ -271,7 +273,8 @@ class MessageClient:
                                 print(f"\nSAVE THIS KEY FOR DECRYPTION:")
                                 print(f"Key (hex): {params['key_hex']}")
                     else:
-                        print(f"\n{response.get('message', 'Failed to send')}")
+                        msg = response.get('message') if isinstance(response, dict) else 'Failed to send'
+                        print(f"\n{msg}")
     
     def view_messages(self):
         """View received messages"""
@@ -310,7 +313,8 @@ class MessageClient:
                             self._decrypt_message(msg)
                     print()
             else:
-                print(f"\n✗ {response.get('message', 'Failed to get messages')}")
+                msg = response.get('message') if isinstance(response, dict) else 'Failed to get messages'
+                print(f"\n✗ {msg}")
     
     def _decrypt_message(self, message_data):
         """Decrypt a message"""
