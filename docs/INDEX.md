@@ -2,7 +2,7 @@
 
 Welcome to the Secure Messaging System documentation!
 
-## 📚 Table of Contents
+## Table of Contents
 
 ### Getting Started
 - **[Quick Start Guide](guides/QUICKSTART.md)** - Get up and running in 5 minutes
@@ -11,7 +11,7 @@ Welcome to the Secure Messaging System documentation!
 
 ### User Guides
 - **[Network Mode Guide](guides/NETWORK_GUIDE.md)** - Multi-user client-server setup
-- **[Standalone Mode](guides/QUICKSTART.md#standalone-mode)** - Single-user usage
+- **[Standalone Mode](guides/QUICKSTART.md)** - Single-user usage
 - **[Storage Guide](guides/STORAGE.md)** - Data persistence and encryption
 - **[Demo Guide](guides/DEMO_GUIDE.md)** - Presentation and demonstration
 
@@ -31,6 +31,10 @@ Welcome to the Secure Messaging System documentation!
 
 ```
 SMS/
+├── main.py                       # Standalone application
+├── server.py                     # Network server (easy access)
+├── client.py                     # Network client (easy access)
+│
 ├── src/                          # Source code
 │   ├── core/                     # Core cryptography modules
 │   │   ├── authentication.py     # User authentication & sessions
@@ -40,13 +44,14 @@ SMS/
 │   │   ├── hashing.py            # SHA-256 & HMAC
 │   │   ├── elgamal.py            # ElGamal & KDC
 │   │   ├── crypto_math.py        # Math primitives
-│   │   └── storage.py            # Encrypted storage
+│   │   ├── storage.py            # Encrypted storage
+│   │   └── security_utils.py     # Security helpers
 │   │
 │   └── network/                  # Network modules
 │       ├── server.py             # Multi-user server
 │       └── client.py             # Network client
 │
-├── scripts/                      # Launcher scripts
+├── scripts/                      # Launcher scripts (legacy)
 │   ├── run_server.py             # Start server
 │   ├── run_client.py             # Start client
 │   └── run_standalone.py         # Standalone mode
@@ -57,7 +62,8 @@ SMS/
 │   ├── test_classical_ciphers.py
 │   ├── test_crypto_math.py
 │   ├── test_hashing.py
-│   └── test_modern_ciphers.py
+│   ├── test_modern_ciphers.py
+│   └── test_lab_concepts.py
 │
 ├── examples/                     # Example scripts
 │   ├── demo_storage.py           # Storage demo
@@ -69,13 +75,10 @@ SMS/
 │   ├── api/                      # API reference
 │   └── INDEX.md                  # This file
 │
-├── data/                         # Data storage (auto-created)
-│   ├── .key                      # Encryption key
-│   ├── users.json.enc            # Encrypted users
-│   ├── user_keys.json.enc        # Encrypted keys
-│   └── blockchain_temp.json      # Blockchain data
-│
-└── main.py                       # Standalone application
+└── data/                         # Data storage (auto-created)
+    ├── users.json.enc            # Encrypted users
+    ├── user_keys.json.enc        # Encrypted keys
+    └── blockchain_temp.json      # Blockchain data
 ```
 
 ---
@@ -125,7 +128,7 @@ success, msg = auth.change_password(username, old_pass, new_pass)
 - PoW mining
 - Chain validation
 - Message logging
-- Temporary persistence
+- Persistent storage
 
 **Main Methods:**
 ```python
@@ -156,306 +159,301 @@ latest = blockchain.get_latest_block()
 
 ### Classical Ciphers (`src/core/classical_ciphers.py`)
 
-**Purpose:** Classic encryption algorithms.
+**Purpose:** Caesar and Vigenère cipher implementations.
 
-**Classes:**
-
-**CaesarCipher** - Shift cipher
+**Caesar Cipher:**
 ```python
-caesar = CaesarCipher(shift=3)
-ciphertext = caesar.encrypt("Hello World")
-plaintext = caesar.decrypt(ciphertext)
+cipher = CaesarCipher(shift=5)
+encrypted = cipher.encrypt("HELLO")  # "MJQQT"
+decrypted = cipher.decrypt("MJQQT")  # "HELLO"
 ```
 
-**VigenereCipher** - Polyalphabetic cipher
+**Vigenère Cipher:**
 ```python
-vigenere = VigenereCipher(key="SECRET")
-ciphertext = vigenere.encrypt("Attack at Dawn")
-plaintext = vigenere.decrypt(ciphertext)
+cipher = VigenereCipher(key="SECRET")
+encrypted = cipher.encrypt("HELLO")
+decrypted = cipher.decrypt(encrypted)
 ```
 
 ---
 
 ### Modern Ciphers (`src/core/modern_ciphers.py`)
 
-**Purpose:** Modern symmetric encryption.
+**Purpose:** XOR stream cipher and Mini block cipher.
 
-**Classes:**
-
-**XORStreamCipher** - XOR-based stream cipher
+**XOR Stream Cipher:**
 ```python
-xor = XORStreamCipher(key="SECRETKEY")
-ciphertext = xor.encrypt("Secret message")
-plaintext = xor.decrypt(ciphertext)
-key_hex = xor.get_key_hex()
+cipher = XORStreamCipher(key_hex="a1b2c3d4...")
+encrypted = cipher.encrypt("Secret message")
+decrypted = cipher.decrypt(encrypted)
+
+# Or generate random key
+cipher = XORStreamCipher.generate_random_key(length=16)
 ```
 
-**MiniBlockCipher** - Simple block cipher
+**Mini Block Cipher:**
 ```python
-block = MiniBlockCipher(key="BLOCKKEY")
-ciphertext = block.encrypt("Confidential")
-plaintext = block.decrypt(ciphertext)
+cipher = MiniBlockCipher(key_hex="0123456789abcdef")
+encrypted = cipher.encrypt("12345678")  # 8-byte blocks
+decrypted = cipher.decrypt(encrypted)
 ```
 
 ---
 
 ### Hashing (`src/core/hashing.py`)
 
-**Purpose:** Message integrity and authentication.
+**Purpose:** SHA-256 hashing and HMAC for integrity.
 
-**Classes:**
-
-**MessageIntegrity** - Hash operations
+**Main Features:**
 ```python
 # Compute hash
 hash_value = MessageIntegrity.compute_hash("message")
 
+# Compute HMAC
+hmac_value = MessageIntegrity.compute_hmac("data", "secret_key")
+
 # Verify hash
-is_valid, computed = MessageIntegrity.verify_hash("message", hash_value)
+is_valid = MessageIntegrity.verify_hash("message", expected_hash)
 
-# HMAC
-hmac = MessageIntegrity.compute_hmac("message", "key")
-is_valid, _ = MessageIntegrity.verify_hmac("message", "key", hmac)
-
-# Multiple algorithms
-hashes = MessageIntegrity.compute_multiple_hashes("message")
-```
-
-**MessageAuthenticationCode** - MAC handling
-```python
-mac_handler = MessageAuthenticationCode("shared_secret")
-mac = mac_handler.generate_mac("message")
-is_valid = mac_handler.verify_mac("message", mac)
+# Verify HMAC
+is_valid = MessageIntegrity.verify_hmac("data", "key", expected_hmac)
 ```
 
 ---
 
-### ElGamal & KDC (`src/core/elgamal.py`)
+### ElGamal (`src/core/elgamal.py`)
 
-**Purpose:** Public key encryption and key distribution.
+**Purpose:** Public key cryptography and Key Distribution Center.
 
-**Classes:**
-
-**ElGamal** - Public key cryptography
+**ElGamal Encryption:**
 ```python
 # Generate keys
-keys = ElGamal.generate_keys(bits=16)
+key_pair = ElGamal.generate_keys(bits=16)
 
-# Encrypt/Decrypt integers
-ciphertext = ElGamal.encrypt(12345, keys)
-plaintext = ElGamal.decrypt(ciphertext, keys)
+# Encrypt
+c1, c2 = ElGamal.encrypt("Hello", key_pair.p, key_pair.g, key_pair.public_key)
 
-# Encrypt/Decrypt strings
-ciphertext = ElGamal.encrypt("Hi", keys)
-plaintext = ElGamal.decrypt_to_string(ciphertext, keys)
+# Decrypt
+plaintext = ElGamal.decrypt(c1, c2, key_pair.p, key_pair.private_key)
 ```
 
-**KeyDistributionCenter** - Centralized key management
+**Key Distribution Center:**
 ```python
 kdc = KeyDistributionCenter()
 
 # Register user
-kdc.register_user(username, key_pair)
+kdc.register_user("alice", alice_key_pair)
 
 # Get public key
-public_key = kdc.get_public_key(username)
-
-# Check registration
-is_registered = kdc.is_user_registered(username)
-
-# List users
-users = kdc.list_registered_users()
+public_key = kdc.get_public_key("alice")
 ```
 
 ---
 
-### Cryptographic Math (`src/core/crypto_math.py`)
+### Storage (`src/core/storage.py`)
 
-**Purpose:** Mathematical primitives for cryptography.
+**Purpose:** Encrypted data persistence with XOR + HMAC.
 
-**Functions:**
-```python
-# GCD
-result = gcd(48, 18)
-
-# Modular inverse
-inv = mod_inverse(3, 11)
-
-# Modular exponentiation
-result = power_mod(base, exp, mod)
-
-# Prime testing
-is_prime_num = is_prime(number)
-
-# Prime generation
-prime = generate_prime(bits=16)
-
-# Primitive root
-root = find_primitive_root(prime)
-```
-
----
-
-### Secure Storage (`src/core/storage.py`)
-
-**Purpose:** Encrypted persistent data storage.
-
-**Key Features:**
-- Fernet encryption (AES-128)
-- Auto-generated keys
-- User data encryption
-- ElGamal key encryption
-- Blockchain persistence
-
-**Main Methods:**
+**Main Features:**
 ```python
 storage = SecureStorage(data_dir="data")
 
-# Save/Load users
+# Save/load users (encrypted)
 storage.save_users(users_dict)
 users = storage.load_users()
 
-# Save/Load keys
+# Save/load user keys (encrypted)
 storage.save_user_keys(keys_dict)
 keys = storage.load_user_keys()
 
-# Blockchain
-storage.save_blockchain_temp(blockchain_data)
-chain = storage.load_blockchain_temp()
-storage.clear_blockchain_temp()
+# Save/load blockchain
+storage.save_blockchain(blockchain_data)
+chain = storage.load_blockchain()
+```
 
-# Information
-info = storage.get_storage_info()
+---
 
-# Backup
-storage.backup_data()
+## Quick Start Commands
+
+### Standalone Mode
+```bash
+# Run single-user application
+python main.py
+```
+
+### Network Mode
+```bash
+# Terminal 1: Start server
+python server.py
+
+# Terminal 2+: Start clients
+python client.py
+```
+
+### Testing
+```bash
+# Run all tests
+python tests/run_tests.py
+
+# Test specific module
+python tests/test_authentication.py
+
+# Verify lab concepts
+python tests/test_lab_concepts.py
 ```
 
 ---
 
 ## Usage Examples
 
-### Basic Authentication Flow
+### Example 1: Basic Messaging (Standalone)
 ```python
-from src.core.storage import SecureStorage
 from src.core.authentication import UserAuthentication
-
-# Initialize with storage
-storage = SecureStorage()
-auth = UserAuthentication(storage=storage)
-
-# Register
-success, msg = auth.register_user("alice", "password123", "alice@example.com")
-
-# Login
-success, msg = auth.login("alice", "password123")
-session_id = msg.split(": ")[1] if success else None
-
-# Data persists across restarts!
-```
-
-### Encrypt and Store Message
-```python
 from src.core.classical_ciphers import CaesarCipher
 from src.core.hashing import MessageIntegrity
 from src.core.blockchain import MessageBlockchain
 from src.core.storage import SecureStorage
 
-# Initialize
+# Setup
 storage = SecureStorage()
+auth = UserAuthentication(storage=storage)
 blockchain = MessageBlockchain(difficulty=2, storage=storage)
-cipher = CaesarCipher(shift=3)
 
-# Encrypt
-plaintext = "Secret Message"
-ciphertext = cipher.encrypt(plaintext)
-msg_hash = MessageIntegrity.compute_hash(plaintext)
+# Register users
+auth.register_user("alice", "pass123", "alice@example.com")
+auth.register_user("bob", "pass456", "bob@example.com")
 
-# Store in blockchain
-block = blockchain.add_message_block(
+# Encrypt message
+cipher = CaesarCipher(shift=5)
+message = "Secret meeting"
+ciphertext = cipher.encrypt(message)
+msg_hash = MessageIntegrity.compute_hash(message)
+
+# Add to blockchain
+blockchain.add_message_block(
     sender="alice",
     receiver="bob",
     ciphertext=ciphertext,
     message_hash=msg_hash,
-    encryption_method="Caesar Cipher"
+    encryption_method="Caesar"
 )
 
-# Blockchain persists temporarily!
+# Verify blockchain
+is_valid, msg = blockchain.is_chain_valid()
+print(f"Blockchain valid: {is_valid}")
 ```
 
-### ElGamal Key Exchange
+### Example 2: ElGamal Encryption
 ```python
 from src.core.elgamal import ElGamal, KeyDistributionCenter
 
+# Generate keys for alice
+alice_keys = ElGamal.generate_keys(bits=16)
+
+# Generate keys for bob
+bob_keys = ElGamal.generate_keys(bits=16)
+
 # Setup KDC
 kdc = KeyDistributionCenter()
-
-# Alice generates keys
-alice_keys = ElGamal.generate_keys(bits=16)
 kdc.register_user("alice", alice_keys)
-
-# Bob generates keys
-bob_keys = ElGamal.generate_keys(bits=16)
 kdc.register_user("bob", bob_keys)
 
-# Alice gets Bob's public key
+# Alice sends to Bob
+message = "Top Secret"
 bob_public = kdc.get_public_key("bob")
+c1, c2 = ElGamal.encrypt(message, bob_keys.p, bob_keys.g, bob_public)
 
-# Alice encrypts for Bob
-message = 12345
-ciphertext = ElGamal.encrypt(message, bob_public)
-
-# Bob decrypts with his private key
-decrypted = ElGamal.decrypt(ciphertext, bob_keys)
+# Bob decrypts
+plaintext = ElGamal.decrypt(c1, c2, bob_keys.p, bob_keys.private_key)
+print(f"Decrypted: {plaintext}")
 ```
 
----
+### Example 3: Secure Storage
+```python
+from src.core.storage import SecureStorage
 
-## Quick Command Reference
+storage = SecureStorage(data_dir="data")
 
-```bash
-# Run server
-python scripts/run_server.py
+# Save data (automatically encrypted with XOR + HMAC)
+users = {
+    "alice": {"password": "hashed", "email": "alice@example.com"},
+    "bob": {"password": "hashed", "email": "bob@example.com"}
+}
+storage.save_users(users)
 
-# Run client
-python scripts/run_client.py
-
-# Standalone mode
-python scripts/run_standalone.py
-
-# Run all tests
-python tests/run_tests.py
-
-# Storage demo
-python examples/demo_storage.py
-
-# Verify system
-python examples/verify_fix.py
+# Load data (automatically decrypted and verified)
+loaded_users = storage.load_users()
+print(f"Loaded {len(loaded_users)} users")
 ```
 
 ---
 
 ## Security Features Summary
 
-| Feature | Module | Encryption | Persistence |
-|---------|--------|------------|-------------|
-| User Authentication | `authentication.py` | SHA-256 Hash | ✓ Encrypted |
-| User Sessions | `authentication.py` | - | ✗ Memory only |
-| ElGamal Keys | `elgamal.py` | - | ✓ Encrypted |
-| Blockchain | `blockchain.py` | - | ✓ Temporary |
-| Storage Encryption | `storage.py` | Fernet/AES-128 | ✓ Files |
-| Message Hashing | `hashing.py` | SHA-256 | - |
-| Message Encryption | `*_ciphers.py` | Various | - |
+### Data Protection
+- **At Rest**: XOR encryption + HMAC integrity
+- **In Transit**: Encrypted before network transmission
+- **Passwords**: SHA-256 hashed
+- **Keys**: Securely generated and stored
+
+### Cryptographic Methods
+1. **Caesar Cipher** - Classical substitution
+2. **Vigenère Cipher** - Polyalphabetic substitution
+3. **XOR Stream Cipher** - Modern stream encryption
+4. **Mini Block Cipher** - Block-based encryption
+5. **ElGamal** - Public key cryptography
+
+### Integrity Verification
+- **SHA-256 Hashing** - Message integrity
+- **HMAC** - Authenticated encryption
+- **Blockchain** - Tamper-evident ledger
+- **PoW Mining** - Computational proof
 
 ---
 
-## Next Steps
+## Lab Concepts Mapping
 
-1. **New User?** → Start with [Quick Start Guide](guides/QUICKSTART.md)
-2. **Developer?** → Read [Architecture](api/ARCHITECTURE.md)
-3. **Testing?** → See [Testing Guide](api/TESTING.md)
-4. **Presenting?** → Use [Demo Guide](guides/DEMO_GUIDE.md)
+| Lab | Concept | Implementation |
+|-----|---------|----------------|
+| 01-02 | Python Basics | All modules |
+| 03 | Caesar Cipher | `classical_ciphers.py` |
+| 04 | Vigenère Cipher | `classical_ciphers.py` |
+| 05 | Modern Ciphers | `modern_ciphers.py` + `storage.py` |
+| 06 | Hashing & HMAC | `hashing.py` + `storage.py` |
+| 07 | Blockchain | `blockchain.py` |
+| 09 | ElGamal | `elgamal.py` |
+| 11 | KDC | `elgamal.py` |
 
 ---
 
-**Need Help?** Check the specific guides or contact the maintainer.
+## Additional Resources
+
+### Documentation Files
+- [Quick Start](guides/QUICKSTART.md) - 5-minute tutorial
+- [Network Guide](guides/NETWORK_GUIDE.md) - Multi-user setup
+- [Architecture](api/ARCHITECTURE.md) - System design
+- [Lab Mapping](api/LAB_MAPPING.md) - Detailed lab concepts
+- [Testing Guide](api/TESTING.md) - Test suite documentation
+
+### Example Scripts
+- `examples/demo_storage.py` - Storage demonstration
+- `examples/test_storage.py` - Storage testing
+- `examples/verify_fix.py` - System verification
+
+### Main Application Files
+- `main.py` - Standalone messaging application
+- `server.py` - Network server (simplified access)
+- `client.py` - Network client (simplified access)
+
+---
+
+## Support
+
+For issues, questions, or contributions:
+- See the main [README](../README.md)
+- Check [GitHub Issues](https://github.com/sabghat90/SMS/issues)
+- Review example scripts in `examples/`
+
+---
+
+**Happy Learning!** Start with the [Quick Start Guide](guides/QUICKSTART.md)

@@ -42,17 +42,16 @@ class UserAuthentication:
     def register_user(self, username, password, email=""):
         """
         Register a new user
-        Returns: (success: bool, message: str) when called directly
-        Returns: bool when used in tests (for compatibility)
+        Returns: (success: bool, message: str)
         """
         if not username or not password:
-            return False  # Return just boolean for test compatibility
+            return False, "Username and password required"
         
         if username in self.users:
-            return False  # Return just boolean for test compatibility
+            return False, "Username already exists"
         
-        if len(password) < 4:  # Reduced to 4 for test compatibility
-            return False  # Return just boolean for test compatibility
+        if len(password) < 4:
+            return False, "Password must be at least 4 characters"
         
         self.users[username] = {
             'password': self._hash_password(password),
@@ -63,7 +62,7 @@ class UserAuthentication:
         
         self._save_users()
         
-        return True  # Return just boolean for test compatibility
+        return True, "Registration successful"
     
     def register(self, username, password, email=""):
         """Alias for register_user for test compatibility"""
@@ -72,14 +71,14 @@ class UserAuthentication:
     def login(self, username, password):
         """
         Authenticate user login
-        Returns: bool for test compatibility
+        Returns: (success: bool, message: str)
         """
         if username not in self.users:
-            return False
+            return False, "Invalid username or password"
         
         password_hash = self._hash_password(password)
         if self.users[username]['password'] != password_hash:
-            return False
+            return False, "Invalid username or password"
         
         session_id = hashlib.sha256(f"{username}{datetime.now()}".encode()).hexdigest()[:16]
         self.active_sessions[session_id] = {
@@ -96,7 +95,7 @@ class UserAuthentication:
         
         self._save_users()
         
-        return True
+        return True, f"Login successful. Session ID: {session_id}"
     
     def logout(self, session_id_or_username):
         """

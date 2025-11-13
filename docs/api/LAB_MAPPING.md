@@ -3,7 +3,7 @@
 
 ---
 
-## 📘 Lab 01: Python Basics
+## Lab 01: Python Basics
 
 ### Concepts Covered
 - Variables and data types
@@ -39,7 +39,7 @@ if username in self.users:
 
 ---
 
-## 📙 Lab 02: Collections (Dictionaries)
+## Lab 02: Collections (Dictionaries)
 
 ### Concepts Covered
 - Dictionary operations
@@ -99,7 +99,7 @@ self.user_keys[username] = key_pair
 
 ---
 
-## 📕 Lab 03: Caesar Cipher
+## Lab 03: Caesar Cipher
 
 ### Concepts Covered
 - Substitution cipher
@@ -138,7 +138,7 @@ class CaesarCipher:
 
 ---
 
-## 📗 Lab 04: Vigenère Cipher
+## Lab 04: Vigenère Cipher
 
 ### Concepts Covered
 - Polyalphabetic substitution
@@ -185,7 +185,7 @@ class VigenereCipher:
 
 ---
 
-## 📘 Lab 05: Modern Ciphers
+## Lab 05: Modern Ciphers
 
 ### Concepts Covered
 - Stream ciphers (XOR-based)
@@ -260,7 +260,7 @@ class MiniBlockCipher:
 
 ---
 
-## 📙 Lab 06: Hashing & Integrity
+## Lab 06: Hashing & Integrity
 
 ### Concepts Covered
 - SHA-256 hash function
@@ -317,7 +317,7 @@ is_valid, computed_hash = MessageIntegrity.verify_hash(plaintext, original_hash)
 
 ---
 
-## 📕 Lab 07: Blockchain
+## Lab 07: Blockchain
 
 ### Concepts Covered
 - Block structure
@@ -400,7 +400,7 @@ block = self.blockchain.add_message_block(
 
 ---
 
-## 📗 Lab 09: ElGamal Encryption
+## Lab 09: ElGamal Encryption
 
 ### Concepts Covered
 - Public-key cryptography
@@ -477,7 +477,7 @@ def decrypt(ciphertext, private_key_pair):
 
 ---
 
-## 📘 Lab 11: Key Distribution
+## Lab 11: Key Distribution
 
 ### Concepts Covered
 - Key Distribution Center (KDC)
@@ -532,7 +532,7 @@ self.kdc.register_user(username, key_pair)
 
 # Line 178: Retrieve recipient's public key
 if not self.kdc.is_user_registered(receiver):
-    print(f"✗ User '{receiver}' not found in KDC")
+    print(f" User '{receiver}' not found in KDC")
     return
 ```
 
@@ -544,7 +544,7 @@ if not self.kdc.is_user_registered(receiver):
 
 ---
 
-## 🔧 Supporting Module: Cryptographic Math
+## Supporting Module: Cryptographic Math
 
 ### Concepts Used Across All Labs
 Located in **crypto_math.py**
@@ -605,7 +605,7 @@ def find_primitive_root(p):
 
 ---
 
-## 📊 Concept Integration Summary
+## Concept Integration Summary
 
 | Lab | Module | Key Function/Class | Line Numbers |
 |-----|--------|-------------------|--------------|
@@ -627,7 +627,7 @@ def find_primitive_root(p):
 
 ---
 
-## 🎯 Learning Path Through Code
+## Learning Path Through Code
 
 ### Beginner Level (Labs 01-02)
 1. Start with **authentication.py** - understand dictionaries and functions
@@ -651,5 +651,5 @@ def find_primitive_root(p):
 
 ---
 
-**Last Updated:** October 31, 2025  
-**Version:** 1.0
+**Last Updated:** Nov 12, 2025  
+**Version:** 1.1

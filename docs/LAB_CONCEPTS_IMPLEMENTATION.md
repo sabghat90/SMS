@@ -1,11 +1,11 @@
-# ✅ Lab Concepts Implementation - Complete
+# Lab Concepts Implementation - Complete
 
 ## Summary
 The Secure Messaging System now uses **ONLY lab concepts (Labs 01-11)** for all security operations. No external cryptography libraries are required!
 
 ---
 
-## 🔐 Security Implementation
+## Security Implementation
 
 ### Storage Encryption & Integrity
 
@@ -19,9 +19,9 @@ The Secure Messaging System now uses **ONLY lab concepts (Labs 01-11)** for all 
 
 ---
 
-## 📝 Files Modified
+## Files Modified
 
-### 1. `src/core/storage.py` ✅
+### 1. `src/core/storage.py`
 **Before**: Used `cryptography.fernet.Fernet` (external library)  
 **After**: Uses Lab 05 XOR Cipher + Lab 06 HMAC
 
@@ -52,7 +52,7 @@ hmac_signature = MessageIntegrity.compute_hmac(encrypted_hex, key)
 - `verify_file_integrity()` - SHA-256 integrity checking
 - `_save_integrity_hash()` - Store SHA-256 hashes
 
-### 2. `src/core/security_utils.py` ✅
+### 2. `src/core/security_utils.py`
 **Changes**: All utilities now use lab concepts
 
 **Updates**:
@@ -61,7 +61,7 @@ hmac_signature = MessageIntegrity.compute_hmac(encrypted_hex, key)
 - `SecureSessionManager`: SHA-256 based session IDs
 - `SecureRandomGenerator`: `os.urandom()` instead of `secrets`
 
-### 3. `requirements.txt` ✅
+### 3. `requirements.txt`
 **Before**:
 ```
 cryptography>=41.0.0
@@ -75,24 +75,24 @@ cryptography>=41.0.0
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Test Script: `test_lab_concepts.py`
 
-**All Tests Pass** ✅
+**All Tests Pass**
 ```
-[Test 1] ✓ Storage module loads successfully
-[Test 2] ✓ No external cryptography library detected
-[Test 3] ✓ Storage initialized successfully
-[Test 4] ✓ Using Lab 05 concept (XOR Stream Cipher)
-[Test 4] ✓ Using Lab 06 concept (HMAC)
-[Test 5] ✓ Data saved and loaded correctly
-[Test 6] ✓ Integrity verification working
-[Test 7] ✓ HMAC signature creation/verification working
-[Test 7] ✓ Prime generation working (Lab 09)
-[Test 8] ✓ XOR cipher working correctly
-[Test 9] ✓ SHA-256 hashing consistent
-[Test 9] ✓ HMAC generation working
+[Test 1] Storage module loads successfully
+[Test 2] No external cryptography library detected
+[Test 3] Storage initialized successfully
+[Test 4] Using Lab 05 concept (XOR Stream Cipher)
+[Test 4] Using Lab 06 concept (HMAC)
+[Test 5] Data saved and loaded correctly
+[Test 6] Integrity verification working
+[Test 7] HMAC signature creation/verification working
+[Test 7] Prime generation working (Lab 09)
+[Test 8] XOR cipher working correctly
+[Test 9] SHA-256 hashing consistent
+[Test 9] HMAC generation working
 ```
 
 ### Run Tests
@@ -102,7 +102,7 @@ python test_lab_concepts.py
 
 ---
 
-## 📊 Lab Concepts Mapping
+## Lab Concepts Mapping
 
 ### Lab 05: Modern Ciphers
 **Concept**: XOR Stream Cipher  
@@ -131,7 +131,7 @@ python test_lab_concepts.py
 
 ---
 
-## 🔄 Data Format
+## Data Format
 
 ### Storage File Structure
 
@@ -167,29 +167,29 @@ python test_lab_concepts.py
 
 ---
 
-## 🎯 Benefits
+## Benefits
 
 ### Educational Value
-1. ✅ **100% Lab Concepts** - No external libraries
-2. ✅ **Transparent** - All code is visible and understandable
-3. ✅ **Practical** - Real-world application of lab concepts
-4. ✅ **Integrated** - Shows how concepts work together
+1.  **100% Lab Concepts** - No external libraries
+2.  **Transparent** - All code is visible and understandable
+3.  **Practical** - Real-world application of lab concepts
+4.  **Integrated** - Shows how concepts work together
 
 ### Security Features
-1. ✅ **Encryption** - XOR Stream Cipher (Lab 05)
-2. ✅ **Integrity** - HMAC-SHA256 verification (Lab 06)
-3. ✅ **Defense in Depth** - Multiple integrity checks
-4. ✅ **Tamper Detection** - HMAC + file hashes
+1.  **Encryption** - XOR Stream Cipher (Lab 05)
+2.  **Integrity** - HMAC-SHA256 verification (Lab 06)
+3.  **Defense in Depth** - Multiple integrity checks
+4.  **Tamper Detection** - HMAC + file hashes
 
 ### Simplicity
-1. ✅ **No Dependencies** - Only Python standard library
-2. ✅ **Easy Installation** - No `pip install` needed
-3. ✅ **Portable** - Works on any Python 3.7+ environment
-4. ✅ **Debuggable** - JSON format, human-readable
+1.  **No Dependencies** - Only Python standard library
+2.  **Easy Installation** - No `pip install` needed
+3.  **Portable** - Works on any Python 3.7+ environment
+4.  **Debuggable** - JSON format, human-readable
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 ### New Documentation
 - **`docs/guides/STORAGE_LAB_CONCEPTS.md`** - Complete security implementation guide
@@ -201,7 +201,7 @@ python test_lab_concepts.py
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Verify Implementation
 ```bash
@@ -215,8 +215,8 @@ python test_lab_concepts.py
 python scripts/run_standalone.py
 
 # Network mode
-python scripts/run_server.py
-python scripts/run_client.py
+python server.py
+python client.py
 ```
 
 ### Check Security Info
@@ -233,7 +233,7 @@ print(info['key_derivation'])     # SHA-256 (Lab 06)
 
 ---
 
-## 📋 Lab Concepts Summary
+## Lab Concepts Summary
 
 ### Labs Used in Storage Security
 
@@ -247,24 +247,24 @@ print(info['key_derivation'])     # SHA-256 (Lab 06)
 | **Lab 09** | Prime Generation | `crypto_math.py` | Random numbers |
 
 ### Labs NOT Used (External Libraries)
-- ❌ AES (would require external library)
-- ❌ RSA (would require external library)
-- ❌ Fernet (was using external `cryptography` library)
+- AES (would require external library)
+- RSA (would require external library)
+- Fernet (was using external `cryptography` library)
 
 ---
 
-## ✨ Key Achievements
+## Key Achievements
 
-1. ✅ **100% Lab Concepts** - All security from Labs 05, 06, 09
-2. ✅ **Zero External Dependencies** - No `cryptography` library
-3. ✅ **All Tests Pass** - Comprehensive verification
-4. ✅ **Production Ready** - Fully functional for educational use
-5. ✅ **Well Documented** - Complete implementation guide
-6. ✅ **Educational Value** - Demonstrates practical application
+1. **100% Lab Concepts** - All security from Labs 05, 06, 09
+2. **Zero External Dependencies** - No `cryptography` library
+3. **All Tests Pass** - Comprehensive verification
+4. **Production Ready** - Fully functional for educational use
+5. **Well Documented** - Complete implementation guide
+6. **Educational Value** - Demonstrates practical application
 
 ---
 
-## 🎓 Learning Outcomes
+## Learning Outcomes
 
 Students can now see:
 1. **Lab 05 in Action** - XOR cipher encrypting real data
@@ -275,7 +275,7 @@ Students can now see:
 
 ---
 
-**Implementation Date**: November 2, 2025  
-**Status**: ✅ Complete  
+**Implementation Date**: November 7, 2025  
+**Status**: Complete  
 **Version**: 2.0 (Lab Concepts Only)  
-**Next Steps**: Ready for use! 🎉
+**Next Steps**: Ready for use!

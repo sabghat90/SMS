@@ -61,9 +61,16 @@ class MessageClient:
     def _send_request(self, request):
         """Send request to server"""
         try:
+            if not self.connected or not self.socket:
+                print("\nNot connected to server")
+                return False
             request_json = json.dumps(request)
             self.socket.send(request_json.encode('utf-8'))
             return True
+        except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError) as e:
+            print(f"\nConnection lost: {e}")
+            self.connected = False
+            return False
         except Exception as e:
             print(f"\nError sending request: {e}")
             return False
@@ -71,9 +78,11 @@ class MessageClient:
     def _receive_response(self, timeout=5):
         """Receive response from server"""
         try:
+            # Temporarily disable notification listener during request/response
+            original_timeout = self.socket.gettimeout()
             self.socket.settimeout(timeout)
             data = self.socket.recv(4096)
-            self.socket.settimeout(None)
+            self.socket.settimeout(original_timeout)
             
             if data:
                 response = json.loads(data.decode('utf-8'))
@@ -86,7 +95,7 @@ class MessageClient:
     
     def _listen_for_notifications(self):
         """Listen for server notifications in background"""
-        while self.running:
+        while self.running and self.username:
             try:
                 self.socket.settimeout(1.0)
                 data = self.socket.recv(4096)
@@ -189,7 +198,7 @@ class MessageClient:
                 online_users = response['online_users']
                 
                 if not users:
-                    print("\n✗ No other users registered")
+                    print("\nNo other users registered")
                     return
                 
                 print(f"\nAvailable users:")
@@ -314,7 +323,7 @@ class MessageClient:
                     print()
             else:
                 msg = response.get('message') if isinstance(response, dict) else 'Failed to get messages'
-                print(f"\n✗ {msg}")
+                print(f"\nError: {msg}")
     
     def _decrypt_message(self, message_data):
         """Decrypt a message"""
@@ -510,3 +519,6 @@ def main():
     finally:
         if client.connected:
             client.disconnect()
+
+if __name__ == "__main__":
+    main()

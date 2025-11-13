@@ -426,3 +426,7 @@ def main():
         print(f"\nServer error: {e}")
     finally:
         server.stop()
+
+
+if __name__ == "__main__":
+    main()

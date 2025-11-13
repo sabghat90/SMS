@@ -94,7 +94,7 @@ class SecureStorage:
                 )
                 
                 if computed_hmac != expected_hmac:
-                    print("⚠ Warning: Data integrity check failed (HMAC mismatch)")
+                    print("Warning: Data integrity check failed (HMAC mismatch)")
                     return None
             
             decrypted_json = self.cipher.decrypt(encrypted_hex)
@@ -351,7 +351,7 @@ class SecureStorage:
                 computed_hash = MessageIntegrity.compute_hash(blockchain_json)
                 
                 if computed_hash != data['hash']:
-                    print("⚠ Warning: Blockchain integrity check failed")
+                    print("Warning: Blockchain integrity check failed")
                     return None
             
             return data['blockchain']

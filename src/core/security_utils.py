@@ -430,4 +430,4 @@ if __name__ == "__main__":
     print(f"   Random prime: {prime}")
     print(f"   Is prime: {is_prime(prime)}\n")
     
-    print("✓ All security utilities working!")
+    print("All security utilities working!")

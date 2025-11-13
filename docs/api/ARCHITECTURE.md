@@ -3,7 +3,7 @@
 
 ---
 
-## 📐 System Architecture
+## System Architecture
 
 ### High-Level Architecture Diagram
 
@@ -48,7 +48,7 @@
 
 ---
 
-## 🔄 Data Flow Architecture
+## Data Flow Architecture
 
 ### Message Sending Workflow
 
@@ -167,13 +167,13 @@
 ├─────────────────────────────────────┤
 │  Compute: SHA-256(decrypted_msg)    │
 │  Compare: computed_hash == stored   │
-│  Result: ✓ Valid / ✗ Tampered      │
+│  Result: Valid / Tampered      │
 └─────────────────────────────────────┘
 ```
 
 ---
 
-## 🗃️ Module Dependencies
+## Module Dependencies
 
 ```
 main.py
@@ -202,7 +202,7 @@ main.py
 
 ---
 
-## 🔐 Security Architecture
+## Security Architecture
 
 ### Security Layers
 
@@ -275,7 +275,7 @@ HMAC:
 
 ---
 
-## 💾 Data Structures
+## Data Structures
 
 ### User Storage
 ```python
@@ -341,7 +341,7 @@ blockchain = [
 
 ---
 
-## 🎯 Component Responsibilities
+## Component Responsibilities
 
 ### Authentication Module
 - **Input:** Username, password
@@ -407,7 +407,7 @@ blockchain = [
 
 ---
 
-## 📊 Performance Characteristics
+## Performance Characteristics
 
 ### Time Complexity
 
@@ -435,7 +435,7 @@ blockchain = [
 
 ---
 
-## 🔍 Error Handling Strategy
+## Error Handling Strategy
 
 ```
 Input Validation
@@ -469,7 +469,7 @@ User Notification
 
 ---
 
-## 🌐 Extensibility Points
+## Extensibility Points
 
 ### Adding New Cipher
 1. Create cipher class in appropriate module
@@ -491,5 +491,5 @@ User Notification
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** October 31, 2025
+**Document Version:** 1.2  
+**Last Updated:** Nov 10, 2025

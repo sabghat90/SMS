@@ -1,15 +1,15 @@
-# 🎬 Multi-Terminal Demo Guide
+# Multi-Terminal Demo Guide
 ## Step-by-Step Visual Demo for Network Messaging
 
 ---
 
-## 🎯 What You'll Demonstrate
+## What You'll Demonstrate
 
 This guide shows how to give a compelling demonstration of the multi-terminal secure messaging system.
 
 ---
 
-## 📺 Setup Your Demo Environment
+## Setup Your Demo Environment
 
 ### Screen Layout
 
@@ -35,7 +35,7 @@ This guide shows how to give a compelling demonstration of the multi-terminal se
 
 ---
 
-## 🎬 Demo Script - Act by Act
+## Demo Script - Act by Act
 
 ### ACT 1: The Setup (2 minutes)
 
@@ -47,10 +47,10 @@ python server.py
 ```
 
 **Point out:**
-- ✅ Server starts on port 5555
-- ✅ Demo users automatically registered (alice, bob, charlie)
-- ✅ ElGamal keys generated for each user
-- ✅ Blockchain initialized with genesis block
+- Server starts on port 5555
+- Demo users automatically registered (alice, bob, charlie)
+- ElGamal keys generated for each user
+- Blockchain initialized with genesis block
 
 **Say:** "The server is now running and managing our shared blockchain. It can handle multiple simultaneous users."
 
@@ -71,10 +71,10 @@ Password: alice123
 ```
 
 **Point out:**
-- ✅ Client connects to server via TCP socket
-- ✅ Credentials verified
-- ✅ Session created
-- ✅ Real-time notification listener started
+- Client connects to server via TCP socket
+- Credentials verified
+- Session created
+- Real-time notification listener started
 
 **Say:** "Alice has successfully connected. Notice the server shows her connection in Terminal 1."
 
@@ -95,9 +95,9 @@ Password: bob123
 ```
 
 **Point out:**
-- ✅ Second client connects simultaneously
-- ✅ Server handles multiple connections with threads
-- ✅ Both users now online
+- Second client connects simultaneously
+- Server handles multiple connections with threads
+- Both users now online
 
 **Say:** "Bob joins the system. The server now manages both Alice and Bob concurrently."
 
@@ -112,8 +112,8 @@ Password: bob123
 **Show the process:**
 ```
 Available users:
-  - bob (🟢 online)
-  - charlie (⚫ offline)
+  - bob (* online)
+  - charlie (X offline)
 
 Receiver: bob
 Message: Hello Bob! This is a secret message from Alice.
@@ -129,11 +129,11 @@ Vigenère key: SECRET
 ```
 
 **Point out what happens:**
-1. ✅ Message hash computed (SHA-256) - **Lab 06**
-2. ✅ Message encrypted with Vigenère - **Lab 04**
-3. ✅ Block created with Proof of Work - **Lab 07**
-4. ✅ Block added to blockchain
-5. ✅ Server shows: "Message: alice -> bob (Block #1)"
+1. Message hash computed (SHA-256) - **Lab 06**
+2. Message encrypted with Vigenère - **Lab 04**
+3. Block created with Proof of Work - **Lab 07**
+4. Block added to blockchain
+5. Server shows: "Message: alice -> bob (Block #1)"
 
 **Say:** "Watch what happens in Bob's terminal..."
 
@@ -145,14 +145,14 @@ Vigenère key: SECRET
 
 **Bob's screen shows:**
 ```
-🔔 New message from alice!
-   Type '2' to view messages
+New message from alice!
+  Type '2' to view messages
 ```
 
 **Point out:**
-- ✅ **REAL-TIME** notification
-- ✅ Bob instantly knows there's a new message
-- ✅ No polling required - event-driven
+- **REAL-TIME** notification
+- Bob instantly knows there's a new message
+- No polling required - event-driven
 
 **Say:** "Notice Bob received an instant notification. This is real-time messaging!"
 
@@ -180,17 +180,17 @@ Decrypt this message? (y/n): y
 ```
 Enter Vigenère key used: SECRET
 
-✓ Decrypted message: Hello Bob! This is a secret message from Alice.
+ Decrypted message: Hello Bob! This is a secret message from Alice.
 
 [Verifying message integrity...]
-✓ Message integrity verified! Hash matches.
+ Message integrity verified! Hash matches.
 ```
 
 **Point out:**
-1. ✅ Bob enters the shared key - **Lab 04 (Vigenère)**
-2. ✅ Message successfully decrypted
-3. ✅ Hash verification confirms integrity - **Lab 06**
-4. ✅ No tampering detected
+1. Bob enters the shared key - **Lab 04 (Vigenère)**
+2. Message successfully decrypted
+3. Hash verification confirms integrity - **Lab 06**
+4. No tampering detected
 
 **Say:** "The message was encrypted end-to-end and integrity is guaranteed by hashing!"
 
@@ -210,15 +210,15 @@ Message: Got your message, Alice! Using XOR encryption now.
 Choice: 3 (XOR Stream Cipher)
 XOR key: (press Enter for random)
 
-✓ Message sent successfully!
-  ⚠️  SAVE THIS KEY FOR DECRYPTION:
+ Message sent successfully!
+  SAVE THIS KEY FOR DECRYPTION:
   Key (hex): 534543524554
 ```
 
 **Point out:**
-- ✅ Different encryption method (XOR) - **Lab 05**
-- ✅ Random key generated
-- ✅ Key displayed for Alice to decrypt
+- Different encryption method (XOR) - **Lab 05**
+- Random key generated
+- Key displayed for Alice to decrypt
 
 ---
 
@@ -227,8 +227,8 @@ XOR key: (press Enter for random)
 #### Terminal 2 - Alice Gets Notification
 
 ```
-🔔 New message from bob!
-   Type '2' to view messages
+New message from bob!
+  Type '2' to view messages
 ```
 
 **Alice views and decrypts:**
@@ -237,8 +237,8 @@ Menu: 2
 Decrypt: y
 Enter XOR key (hex): 534543524554
 
-✓ Decrypted message: Got your message, Alice! Using XOR encryption now.
-✓ Message integrity verified! Hash matches.
+Decrypted message: Got your message, Alice! Using XOR encryption now.
+Message integrity verified! Hash matches.
 ```
 
 **Say:** "Perfect! Communication works both ways with different encryption methods."
@@ -288,10 +288,10 @@ Message Data:
 ```
 
 **Point out:**
-- ✅ Each block links to previous - **Lab 07 (Blockchain)**
-- ✅ Proof of Work (leading zeros in hash)
-- ✅ Complete audit trail
-- ✅ Immutable record
+- Each block links to previous - **Lab 07 (Blockchain)**
+- Proof of Work (leading zeros in hash)
+- Complete audit trail
+- Immutable record
 
 **Say:** "Every message is permanently recorded in the blockchain!"
 
@@ -308,16 +308,16 @@ Message Data:
 
 Verifying entire blockchain...
 
-✓ Blockchain is valid
+Blockchain is valid
   All 3 blocks verified
   Chain integrity: INTACT
   Immutability: GUARANTEED
 ```
 
 **Point out:**
-- ✅ All clients can verify blockchain
-- ✅ Cryptographic guarantee of immutability
-- ✅ Tampering would be detected instantly
+- All clients can verify blockchain
+- Cryptographic guarantee of immutability
+- Tampering would be detected instantly
 
 **Say:** "The blockchain cannot be tampered with - it's cryptographically secure!"
 
@@ -338,9 +338,9 @@ python client.py
 3. Bob sends to Charlie (Vigenère)
 
 **Point out:**
-- ✅ Server handles 3+ simultaneous users
-- ✅ Blockchain grows with each message
-- ✅ All encryption methods work concurrently
+- Server handles 3+ simultaneous users
+- Blockchain grows with each message
+- All encryption methods work concurrently
 
 ---
 
@@ -371,7 +371,7 @@ python client.py
 
 ---
 
-## 🎤 Key Talking Points
+## Key Talking Points
 
 ### Security Features
 1. **Confidentiality:** 4 encryption methods available
@@ -399,26 +399,26 @@ python client.py
 
 ---
 
-## 🎯 Demo Tips
+## Demo Tips
 
 ### Before You Start
-- ✅ Test everything beforehand
-- ✅ Prepare your terminal layout
-- ✅ Have backup slides for concepts
-- ✅ Practice the timing (15-20 min total)
+- Test everything beforehand
+- Prepare your terminal layout
+- Have backup slides for concepts
+- Practice the timing (15-20 min total)
 
 ### During Demo
-- ✅ **Speak clearly** - Explain what you're doing
-- ✅ **Point to screens** - Show where things happen
-- ✅ **Pause for effect** - Let notifications appear
-- ✅ **Explain concepts** - Don't just click through
+- **Speak clearly** - Explain what you're doing
+- **Point to screens** - Show where things happen
+- **Pause for effect** - Let notifications appear
+- **Explain concepts** - Don't just click through
 
 ### Things to Highlight
-- ✅ Real-time message delivery
-- ✅ Multiple encryption options
-- ✅ Blockchain immutability
-- ✅ Hash verification
-- ✅ Multi-user concurrent access
+- Real-time message delivery
+- Multiple encryption options
+- Blockchain immutability
+- Hash verification
+- Multi-user concurrent access
 
 ### Common Questions (Be Ready!)
 1. **Q:** "Is this secure?"  
@@ -438,7 +438,7 @@ python client.py
 
 ---
 
-## 🎬 Alternative Demo Scenarios
+## Alternative Demo Scenarios
 
 ### Scenario A: Speed Demo (5 minutes)
 1. Start server
@@ -463,18 +463,18 @@ python client.py
 
 ---
 
-## 📊 Success Metrics
+## Success Metrics
 
 Your demo is successful if audience:
-- ✅ Understands multi-user messaging works
-- ✅ Sees real-time notification in action
-- ✅ Recognizes different encryption methods
-- ✅ Appreciates blockchain immutability
-- ✅ Connects concepts to their labs
+- Understands multi-user messaging works
+- Sees real-time notification in action
+- Recognizes different encryption methods
+- Appreciates blockchain immutability
+- Connects concepts to their labs
 
 ---
 
-## 🎓 Closing Statement
+## Closing Statement
 
 **Say:** "This system successfully integrates 8 information security labs into one working application. It demonstrates encryption, hashing, blockchain, and network programming - all fundamental concepts in modern security systems."
 
@@ -484,6 +484,6 @@ Your demo is successful if audience:
 
 ---
 
-**Ready to demo?** Follow this script and you'll give a great presentation! 🎬
+**Ready to demo?** Follow this script and you'll give a great presentation!
 
 **Remember:** Practice makes perfect! Run through the demo 2-3 times before presenting.

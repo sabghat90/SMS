@@ -1,13 +1,13 @@
 # Quick Start Guide
 ## Secure Messaging System
 
-### 🚀 Run the Application
+### Run the Application
 
 ```bash
 python main.py
 ```
 
-### 📝 Quick Demo Steps
+### Quick Demo Steps
 
 #### 1. Login with Demo Account
 ```
@@ -47,7 +47,7 @@ Choice: 4 (Verify Blockchain Integrity)
 
 ---
 
-## 🎮 Menu Options Explained
+## Menu Options Explained
 
 ### Main Menu (Not Logged In)
 1. **Register** - Create new user account
@@ -64,7 +64,7 @@ Choice: 4 (Verify Blockchain Integrity)
 
 ---
 
-## 🔐 Encryption Methods Guide
+## Encryption Methods Guide
 
 ### Caesar Cipher
 - **Type:** Classical substitution cipher
@@ -92,7 +92,7 @@ Choice: 4 (Verify Blockchain Integrity)
 
 ---
 
-## 💡 Tips
+## Tips
 
 ### For Encryption
 - **Classical ciphers:** Easy to use, remember the key!
@@ -112,7 +112,7 @@ Choice: 4 (Verify Blockchain Integrity)
 
 ---
 
-## 🧪 Test Scenarios
+## Test Scenarios
 
 ### Scenario 1: Basic Communication
 1. Alice sends Caesar cipher message to Bob (shift=5)
@@ -129,11 +129,11 @@ Choice: 4 (Verify Blockchain Integrity)
 1. Send multiple messages
 2. View blockchain
 3. Verify integrity
-4. All checks should pass ✓
+4. All checks should pass
 
 ---
 
-## ❓ Common Questions
+## Common Questions
 
 **Q: What if I forget my encryption key?**  
 A: Message cannot be decrypted. Keys are not stored in the system.
@@ -152,41 +152,41 @@ A: Yes, any tampering will be detected by integrity verification.
 
 ---
 
-## 📊 Understanding the Output
+## Understanding the Output
 
 ### After Sending Message:
 ```
 [Step 1] Computing SHA-256 hash of message...
-✓ Message hash: 9b871c6d...
+- Message hash: 9b871c6d...
 
 [Step 2] Encrypting with Vigenère Cipher...
-✓ Message encrypted
+- Message encrypted
   Ciphertext preview: IQNNT...
 
 [Step 3] Adding to blockchain...
-✓ Block #2 created and mined
+- Block #2 created and mined
   Block hash: 0012a5b8c...
   Timestamp: 2025-10-31 14:23:45
 ```
 
 ### After Decrypting:
 ```
-✓ Decrypted message: Hello Bob!
+- Decrypted message: Hello Bob!
 
 [Verifying message integrity...]
-✓ Message integrity verified! Hash matches.
+- Message integrity verified! Hash matches.
 ```
 
 ---
 
-## 🎯 Learning Checkpoints
+## Learning Checkpoints
 
 After completing this quick start, you should understand:
-- ✅ User authentication flow
-- ✅ Encryption method selection
-- ✅ Message integrity verification
-- ✅ Blockchain immutability
-- ✅ Key management importance
+- User authentication flow
+- Encryption method selection
+- Message integrity verification
+- Blockchain immutability
+- Key management importance
 
 ---
 

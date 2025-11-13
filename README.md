@@ -1,4 +1,4 @@
-# 🔐 Secure Messaging System (SMS)
+# Secure Messaging System (SMS)
 
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -10,18 +10,18 @@
 
 ---
 
-## ✨ Highlights
+## Highlights
 
-🎓 **Pure Lab Concepts** - No external crypto libraries, only Labs 01-11 implementations  
-🔒 **Multi-Layer Security** - XOR encryption + HMAC integrity + SHA-256 hashing  
-⛓️ **Blockchain Ledger** - Immutable message history with Proof of Work  
-🌐 **Network Ready** - Multi-user client-server architecture  
-💾 **Persistent Storage** - Encrypted data at rest with integrity verification  
-🧪 **Fully Tested** - Comprehensive test suite with 100% lab concept coverage
+- **Pure Lab Concepts** - No external crypto libraries, only Labs 01-11 implementations  
+- **Multi-Layer Security** - XOR encryption + HMAC integrity + SHA-256 hashing  
+- **Blockchain Ledger** - Immutable message history with Proof of Work  
+- **Network Ready** - Multi-user client-server architecture  
+- **Persistent Storage** - Encrypted data at rest with integrity verification  
+- **Fully Tested** - Comprehensive test suite with 100% lab concept coverage
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **Python 3.7+** (No additional packages needed!)
@@ -40,30 +40,30 @@ cd SMS
 
 #### 1. Standalone Mode (Single User)
 ```bash
-python scripts/run_standalone.py
+python main.py
 ```
 
-#### 2. Network Mode (Multi-User)
+#### 2. Network Mode (Multi-User) - SIMPLIFIED!
 ```bash
 # Terminal 1: Start Server
-python scripts/run_server.py
+python server.py
 
 # Terminal 2: Start Client
-python scripts/run_client.py
+python client.py
 ```
 
-#### 3. Verify Installation
+#### 3. Run Tests
 ```bash
-# Check system setup
-python setup.py
-
 # Test lab concepts implementation
 python tests/test_lab_concepts.py
+
+# Run all tests
+python tests/run_tests.py
 ```
 
 ---
 
-## 🎓 Lab Concepts Implementation
+## Lab Concepts Implementation
 
 This project demonstrates **all 11 labs** in action:
 
@@ -79,11 +79,11 @@ This project demonstrates **all 11 labs** in action:
 | **09** | ElGamal | `elgamal.py` | Public key cryptography |
 | **11** | Key Distribution | `elgamal.py` | KDC implementation |
 
-📖 **Detailed mapping**: [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
+**Detailed mapping**: [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 
 ---
 
-## 🔐 Security Architecture
+## Security Architecture
 
 ### Storage Security (Labs 05 + 06)
 
@@ -146,80 +146,81 @@ Send Message ──► Choose Cipher ──► Encrypt ──► Hash (SHA-256)
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 SMS/
-├── 📄 main.py                      # Standalone application entry point
-├── 📄 setup.py                     # System verification script
-├── 📄 requirements.txt             # Dependencies (NONE - only standard lib!)
-├── 📄 README.md                    # This file
+├── main.py                        # Standalone application entry point
+├── server.py                      # Network server (easy access)
+├── client.py                      # Network client (easy access)
+├── requirements.txt               # Dependencies (NONE - only standard lib!)
+├── README.md                      # This file
 │
-├── 📁 src/                         # Source code
-│   ├── 📁 core/                    # Core cryptography modules
-│   │   ├── authentication.py       # User auth & sessions (Lab 02)
-│   │   ├── blockchain.py           # Blockchain with PoW (Lab 07)
-│   │   ├── classical_ciphers.py    # Caesar, Vigenère (Lab 03-04)
-│   │   ├── modern_ciphers.py       # XOR, Block Cipher (Lab 05)
-│   │   ├── hashing.py              # SHA-256, HMAC (Lab 06)
-│   │   ├── elgamal.py              # ElGamal, KDC (Lab 09, 11)
-│   │   ├── crypto_math.py          # Math primitives (primes, modular)
-│   │   ├── storage.py              # 🔐 Encrypted storage (Lab 05+06)
-│   │   └── security_utils.py       # Security helpers (Lab concepts)
+├── src/                           # Source code
+│   ├── core/                      # Core cryptography modules
+│   │   ├── authentication.py      # User auth & sessions (Lab 02)
+│   │   ├── blockchain.py          # Blockchain with PoW (Lab 07)
+│   │   ├── classical_ciphers.py   # Caesar, Vigenère (Lab 03-04)
+│   │   ├── modern_ciphers.py      # XOR, Block Cipher (Lab 05)
+│   │   ├── hashing.py             # SHA-256, HMAC (Lab 06)
+│   │   ├── elgamal.py             # ElGamal, KDC (Lab 09, 11)
+│   │   ├── crypto_math.py         # Math primitives (primes, modular)
+│   │   ├── storage.py             # Encrypted storage (Lab 05+06)
+│   │   └── security_utils.py      # Security helpers (Lab concepts)
 │   │
-│   └── 📁 network/                 # Network modules
-│       ├── server.py               # Multi-user TCP server
-│       └── client.py               # Network client
+│   └── network/                   # Network modules
+│       ├── server.py              # Multi-user TCP server
+│       └── client.py              # Network client
 │
-├── 📁 scripts/                     # Launcher scripts
-│   ├── run_server.py               # Start network server
-│   ├── run_client.py               # Start network client
-│   └── run_standalone.py           # Start standalone mode
+├── scripts/                       # Launcher scripts (legacy)
+│   ├── run_server.py              # Start network server
+│   ├── run_client.py              # Start network client
+│   └── run_standalone.py          # Start standalone mode
 │
-├── 📁 tests/                       # Unit tests
-│   ├── test_authentication.py      # Auth tests
-│   ├── test_blockchain.py          # Blockchain tests
-│   ├── test_classical_ciphers.py   # Classical cipher tests
-│   ├── test_crypto_math.py         # Crypto math tests
-│   ├── test_hashing.py             # Hashing tests
-│   ├── test_modern_ciphers.py      # Modern cipher tests
-│   ├── test_lab_concepts.py        # 🧪 Lab concepts verification
-│   ├── run_tests.py                # Test runner
-│   └── README.md                   # Testing guide
+├── tests/                         # Unit tests
+│   ├── test_authentication.py     # Auth tests
+│   ├── test_blockchain.py         # Blockchain tests
+│   ├── test_classical_ciphers.py  # Classical cipher tests
+│   ├── test_crypto_math.py        # Crypto math tests
+│   ├── test_hashing.py            # Hashing tests
+│   ├── test_modern_ciphers.py     # Modern cipher tests
+│   ├── test_lab_concepts.py       # Lab concepts verification
+│   ├── run_tests.py               # Test runner
+│   └── README.md                  # Testing guide
 │
-├── 📁 examples/                    # Example & demo scripts
-│   ├── demo_storage.py             # Storage demonstration
-│   ├── test_storage.py             # Storage integration tests
-│   └── verify_fix.py               # System verification
+├── examples/                      # Example & demo scripts
+│   ├── demo_storage.py            # Storage demonstration
+│   ├── test_storage.py            # Storage integration tests
+│   └── verify_fix.py              # System verification
 │
-├── 📁 docs/                        # Documentation
-│   ├── INDEX.md                    # 📖 Documentation hub
+├── docs/                          # Documentation
+│   ├── INDEX.md                   # Documentation hub
 │   ├── LAB_CONCEPTS_IMPLEMENTATION.md  # Lab concepts summary
-│   ├── REORGANIZATION_SUMMARY.md   # Project reorganization notes
+│   ├── REORGANIZATION_SUMMARY.md  # Project reorganization notes
 │   │
-│   ├── 📁 guides/                  # User guides
-│   │   ├── QUICKSTART.md           # 5-minute setup
-│   │   ├── NETWORK_GUIDE.md        # Multi-user guide
+│   ├── guides/                    # User guides
+│   │   ├── QUICKSTART.md          # 5-minute setup
+│   │   ├── NETWORK_GUIDE.md       # Multi-user guide
 │   │   ├── STORAGE_LAB_CONCEPTS.md # Storage security details
 │   │   ├── STORAGE_IMPLEMENTATION.md # Storage implementation
-│   │   ├── DEMO_GUIDE.md           # Presentation guide
-│   │   └── DATA_DIRECTORY_FIX.md   # Troubleshooting
+│   │   ├── DEMO_GUIDE.md          # Presentation guide
+│   │   └── DATA_DIRECTORY_FIX.md  # Troubleshooting
 │   │
-│   └── 📁 api/                     # API reference
-│       ├── ARCHITECTURE.md         # System architecture
-│       ├── LAB_MAPPING.md          # Lab concepts mapping
-│       └── TESTING.md              # Testing guide
+│   └── api/                       # API reference
+│       ├── ARCHITECTURE.md        # System architecture
+│       ├── LAB_MAPPING.md         # Lab concepts mapping
+│       └── TESTING.md             # Testing guide
 │
-└── 📁 data/                        # Auto-created data directory
-    ├── users.json.enc              # Encrypted user data (XOR + HMAC)
-    ├── user_keys.json.enc          # Encrypted ElGamal keys (XOR + HMAC)
-    ├── .integrity                  # SHA-256 integrity hashes
-    └── blockchain_temp.json        # Blockchain storage (SHA-256 protected)
+└── data/                          # Auto-created data directory
+    ├── users.json.enc             # Encrypted user data (XOR + HMAC)
+    ├── user_keys.json.enc         # Encrypted ElGamal keys (XOR + HMAC)
+    ├── .integrity                 # SHA-256 integrity hashes
+    └── blockchain_temp.json       # Blockchain storage (SHA-256 protected)
 ```
 
 ---
 
-## 🔧 Core Features
+## Core Features
 
 ### 1. User Authentication (Lab 02, 06)
 - Secure registration with SHA-256 password hashing
@@ -267,13 +268,13 @@ SMS/
 
 ---
 
-## 🎯 Usage Examples
+## Usage Examples
 
 ### Example 1: Standalone Mode - Send Encrypted Message
 
-```python
+```bash
 # Start application
-python scripts/run_standalone.py
+python main.py
 
 # Register/Login
 # Choose encryption method (e.g., ElGamal)
@@ -288,16 +289,16 @@ python scripts/run_standalone.py
 
 ```bash
 # Terminal 1: Server
-python scripts/run_server.py
+python server.py
 # Server starts with demo users (alice, bob, charlie)
 
 # Terminal 2: Client 1 (Alice)
-python scripts/run_client.py
+python client.py
 # Login as alice
 # Send encrypted message to bob
 
 # Terminal 3: Client 2 (Bob)
-python scripts/run_client.py
+python client.py
 # Login as bob
 # View messages from alice
 # Decrypt and verify integrity
@@ -310,15 +311,15 @@ python scripts/run_client.py
 python tests/test_lab_concepts.py
 
 # Output shows:
-# ✓ Lab 05: XOR Stream Cipher working
-# ✓ Lab 06: SHA-256 + HMAC working
-# ✓ Lab 09: Prime generation working
-# ✓ All security using lab concepts only
+# - Lab 05: XOR Stream Cipher working
+# - Lab 06: SHA-256 + HMAC working
+# - Lab 09: Prime generation working
+# - All security using lab concepts only
 ```
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Run All Tests
 
@@ -328,33 +329,30 @@ python tests/run_tests.py
 
 # Verify lab concepts implementation
 python tests/test_lab_concepts.py
-
-# System setup verification
-python setup.py
 ```
 
 ### Test Coverage
 
-- ✅ Authentication module
-- ✅ Blockchain functionality
-- ✅ Classical ciphers (Caesar, Vigenère)
-- ✅ Modern ciphers (XOR, Block)
-- ✅ Hashing and HMAC
-- ✅ Crypto math primitives
-- ✅ Storage encryption/decryption
-- ✅ Lab concepts verification
+- Authentication module
+- Blockchain functionality
+- Classical ciphers (Caesar, Vigenère)
+- Modern ciphers (XOR, Block)
+- Hashing and HMAC
+- Crypto math primitives
+- Storage encryption/decryption
+- Lab concepts verification
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 ### Quick Links
-- 🚀 [Quick Start Guide](docs/guides/QUICKSTART.md)
-- 🌐 [Network Setup](docs/guides/NETWORK_GUIDE.md)
-- 🔐 [Storage Security](docs/guides/STORAGE_LAB_CONCEPTS.md)
-- 🎓 [Lab Mapping](docs/api/LAB_MAPPING.md)
-- 🏗️ [Architecture](docs/api/ARCHITECTURE.md)
-- 📋 [Documentation Hub](docs/INDEX.md)
+- [Quick Start Guide](docs/guides/QUICKSTART.md)
+- [Network Setup](docs/guides/NETWORK_GUIDE.md)
+- [Storage Security](docs/guides/STORAGE_LAB_CONCEPTS.md)
+- [Lab Mapping](docs/api/LAB_MAPPING.md)
+- [Architecture](docs/api/ARCHITECTURE.md)
+- [Documentation Hub](docs/INDEX.md)
 
 ### Key Documents
 - **For Students**: Start with [QUICKSTART.md](docs/guides/QUICKSTART.md)
@@ -364,7 +362,7 @@ python setup.py
 
 ---
 
-## 🎓 Educational Objectives
+## Educational Objectives
 
 ### What Students Learn
 
@@ -378,17 +376,17 @@ python setup.py
 
 ### Lab Concepts Demonstrated
 
-- ✅ **Lab 01-02**: Python fundamentals applied throughout
-- ✅ **Lab 03-04**: Classical ciphers in messaging context
-- ✅ **Lab 05**: Modern ciphers protecting stored data
-- ✅ **Lab 06**: Hashing and HMAC ensuring integrity
-- ✅ **Lab 07**: Blockchain providing audit trail
-- ✅ **Lab 09**: ElGamal enabling secure communication
-- ✅ **Lab 11**: KDC managing public keys
+- **Lab 01-02**: Python fundamentals applied throughout
+- **Lab 03-04**: Classical ciphers in messaging context
+- **Lab 05**: Modern ciphers protecting stored data
+- **Lab 06**: Hashing and HMAC ensuring integrity
+- **Lab 07**: Blockchain providing audit trail
+- **Lab 09**: ElGamal enabling secure communication
+- **Lab 11**: KDC managing public keys
 
 ---
 
-## 🔬 Technical Details
+## Technical Details
 
 ### Security Implementation
 
@@ -411,16 +409,16 @@ python setup.py
 
 ### Security Considerations
 
-⚠️ **Educational Purpose**: This project uses simplified cryptography for learning:
+**Educational Purpose**: This project uses simplified cryptography for learning:
 - XOR cipher is educational, not production-grade
 - 16-bit ElGamal keys are for demo (real-world uses 2048+ bits)
 - Simplified Proof of Work (production uses higher difficulty)
 
-✅ **Lab Concepts Applied Correctly**: All implementations follow lab specifications
+**Lab Concepts Applied Correctly**: All implementations follow lab specifications
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! This is an educational project, so focus on:
 - Improving documentation
@@ -430,13 +428,13 @@ Contributions are welcome! This is an educational project, so focus on:
 
 ---
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Computer Security Labs 01-11**: Foundation for all concepts
 - **Educational Purpose**: Designed for learning and demonstration
@@ -444,7 +442,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Contact & Support
+## Author & Dedication
+
+**Author**: Sabghat Ullah Qureshi
+
+**Dedicated to**: BCS4A & BCS4B Students, COMSATS University Islamabad (CUI)
+
+This project is created as an educational resource for Computer Science students, demonstrating practical implementations of cryptographic concepts covered in Labs 01-11.
+
+---
+
+## Contact & Support
 
 - **Repository**: [https://github.com/sabghat90/SMS](https://github.com/sabghat90/SMS)
 - **Issues**: [GitHub Issues](https://github.com/sabghat90/SMS/issues)
@@ -452,7 +460,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🎉 Quick Reference
+## Quick Reference
 
 ### Commands Cheat Sheet
 
@@ -462,14 +470,11 @@ git clone https://github.com/sabghat90/SMS.git
 cd SMS
 
 # Run standalone
-python scripts/run_standalone.py
+python main.py
 
-# Run server + client
-python scripts/run_server.py    # Terminal 1
-python scripts/run_client.py    # Terminal 2
-
-# Verify setup
-python setup.py
+# Run server + client (NEW - SIMPLIFIED!)
+python server.py    # Terminal 1
+python client.py    # Terminal 2
 
 # Test lab concepts
 python tests/test_lab_concepts.py
@@ -480,20 +485,20 @@ python tests/run_tests.py
 
 ### Features at a Glance
 
-- 🔐 **5 Encryption Methods**: Caesar, Vigenère, XOR, Block, ElGamal
-- ⛓️ **Blockchain**: Proof of Work message ledger
-- 💾 **Secure Storage**: XOR + HMAC encrypted files
-- 🌐 **Multi-User**: Network server with KDC
-- 🧪 **100% Tested**: Comprehensive test suite
-- 📚 **Well Documented**: Complete guides and API reference
-- 🎓 **Pure Lab Concepts**: No external crypto libraries
+- **5 Encryption Methods**: Caesar, Vigenère, XOR, Block, ElGamal
+- **Blockchain**: Proof of Work message ledger
+- **Secure Storage**: XOR + HMAC encrypted files
+- **Multi-User**: Network server with KDC
+- **100% Tested**: Comprehensive test suite
+- **Well Documented**: Complete guides and API reference
+- **Pure Lab Concepts**: No external crypto libraries
 
 ---
 
 <div align="center">
 
-**Built with ❤️ for Computer Security Education**
+**Built for Computer Security Education**
 
-🔐 **100% Lab Concepts** | 🚀 **Production Ready for Learning** | 🎓 **Educational Excellence**
+**100% Lab Concepts** | **Production Ready for Learning** | **Educational Excellence**
 
 </div>

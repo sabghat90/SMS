@@ -42,14 +42,14 @@ data/
 - **Data Integrity**: HMAC ensures data hasn't been tampered with
 
 ### What's Encrypted
-✅ User passwords (hashed then encrypted)  
-✅ User email addresses  
-✅ ElGamal private keys  
-✅ User metadata  
+User passwords (hashed then encrypted)  
+User email addresses  
+ElGamal private keys  
+User metadata  
 
 ### What's NOT Encrypted
-❌ Blockchain data (temporary storage for debugging)  
-❌ Active session data (in-memory only)  
+Blockchain data (temporary storage for debugging)  
+Active session data (in-memory only)  
 
 ## Usage
 
@@ -81,25 +81,25 @@ storage.clear_blockchain_temp()
 
 | Data Type | Persistence | Encryption | Auto-Save |
 |-----------|-------------|------------|-----------|
-| User Credentials | Permanent | ✅ Yes | ✅ Yes |
-| ElGamal Keys | Permanent | ✅ Yes | ✅ Yes |
-| Blockchain | Temporary | ❌ No | ✅ Yes |
-| Active Sessions | Memory Only | N/A | ❌ No |
+| User Credentials | Permanent | Yes | Yes |
+| ElGamal Keys | Permanent | Yes | Yes |
+| Blockchain | Temporary | No | Yes |
+| Active Sessions | Memory Only | N/A | No |
 
 ## Important Notes
 
-### ⚠️ Encryption Key
+### Encryption Key
 - The `.key` file is **critical** - losing it means losing access to all encrypted data
 - **DO NOT** commit `.key` file to version control
 - **DO NOT** share the `.key` file
 - Consider backing up the key securely
 
-### 🗑️ Temporary Blockchain
+### Temporary Blockchain
 - Blockchain storage is marked as "temporary"
 - Clearing the blockchain doesn't affect user data
 - In production, consider using a proper database
 
-### 🔒 Security Best Practices
+### Security Best Practices
 1. Keep the `data/` directory secure
 2. Backup the `.key` file separately
 3. Use strong passwords for user accounts
