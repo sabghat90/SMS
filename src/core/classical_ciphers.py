@@ -19,22 +19,17 @@ class CaesarCipher:
         
         for char in plaintext:
             if char.isalpha():
-                # Convert to uppercase for consistency
                 char = char.upper()
-                # Use uppercase ASCII offset
                 ascii_offset = ord('A')
-                # Shift character
                 shifted = (ord(char) - ascii_offset + self.shift) % 26
                 ciphertext += chr(shifted + ascii_offset)
             else:
-                # Non-alphabetic characters remain unchanged
                 ciphertext += char
         
         return ciphertext
     
     def decrypt(self, ciphertext):
         """Decrypt ciphertext using Caesar cipher"""
-        # Decryption is just encryption with negative shift
         original_shift = self.shift
         self.shift = -self.shift
         plaintext = self.encrypt(ciphertext)
@@ -69,20 +64,16 @@ class VigenereCipher:
         
         for char in plaintext:
             if char.isalpha():
-                # Determine if uppercase or lowercase
                 ascii_offset = ord('A') if char.isupper() else ord('a')
                 
-                # Get corresponding key character
                 key_char = self.key[key_index % len(self.key)]
                 key_shift = ord(key_char) - ord('A')
                 
-                # Encrypt character
                 shifted = (ord(char) - ascii_offset + key_shift) % 26
                 ciphertext += chr(shifted + ascii_offset)
                 
                 key_index += 1
             else:
-                # Non-alphabetic characters remain unchanged
                 ciphertext += char
         
         return ciphertext
@@ -94,20 +85,16 @@ class VigenereCipher:
         
         for char in ciphertext:
             if char.isalpha():
-                # Determine if uppercase or lowercase
                 ascii_offset = ord('A') if char.isupper() else ord('a')
                 
-                # Get corresponding key character
                 key_char = self.key[key_index % len(self.key)]
                 key_shift = ord(key_char) - ord('A')
                 
-                # Decrypt character
                 shifted = (ord(char) - ascii_offset - key_shift) % 26
                 plaintext += chr(shifted + ascii_offset)
                 
                 key_index += 1
             else:
-                # Non-alphabetic characters remain unchanged
                 plaintext += char
         
         return plaintext

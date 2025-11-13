@@ -6,7 +6,6 @@ Network-based server for multi-user messaging across terminals
 import socket
 import threading
 import json
-import pickle
 from datetime import datetime
 from src.core.authentication import UserAuthentication
 from src.core.classical_ciphers import CaesarCipher, VigenereCipher
@@ -28,19 +27,15 @@ class MessageServer:
         self.server_socket = None
         self.running = False
         
-        # Initialize secure storage
         self.storage = SecureStorage(data_dir="data")
         
-        # Initialize all components with storage
         self.auth = UserAuthentication(storage=self.storage)
         self.kdc = KeyDistributionCenter()
         self.blockchain = MessageBlockchain(difficulty=2, storage=self.storage)
         
-        # Load existing user keys from storage
         self.user_keys = {}
         stored_keys = self.storage.load_user_keys()
         
-        # Convert stored key dictionaries back to ElGamalKeyPair objects
         for username, key_data in stored_keys.items():
             if isinstance(key_data, dict):
                 key_obj = ElGamalKeyPair(
@@ -50,22 +45,17 @@ class MessageServer:
                     public_key=key_data['public_key']
                 )
                 self.user_keys[username] = key_obj
-                # Register with KDC
                 self.kdc.register_user(username, key_obj)
         
-        # Track connected clients
         self.clients = {}  # {username: client_socket}
         self.client_threads = []
         
-        # Thread lock for synchronized access
         self.lock = threading.Lock()
         
-        # Setup demo users (only if no users exist)
         self._setup_demo_users()
     
     def _setup_demo_users(self):
         """Setup demo users for testing"""
-        # Only setup demo users if no users exist
         if len(self.auth.users) > 0:
             print(f"Found {len(self.auth.users)} existing users in storage.")
             return
@@ -80,16 +70,14 @@ class MessageServer:
         for username, password, email in demo_users:
             success, _ = self.auth.register_user(username, password, email)
             if success:
-                # Generate ElGamal keys
                 key_pair = ElGamal.generate_keys(bits=16)
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
-                print(f"  ✓ Demo user '{username}' registered")
+                print(f"Demo user '{username}' registered")
         
-        # Save all demo user keys
         if self.user_keys:
             self.storage.save_user_keys(self.user_keys)
-            print("✓ User keys saved to storage")
+            print("User keys saved to storage")
     
     def start(self):
         """Start the server"""
@@ -104,17 +92,15 @@ class MessageServer:
             print("\n" + "="*60)
             print(" "*15 + "SECURE MESSAGING SERVER")
             print("="*60)
-            print(f"\n✓ Server started on {self.host}:{self.port}")
-            print(f"✓ Waiting for connections...")
-            print(f"✓ Press Ctrl+C to stop the server\n")
+            print(f"\nServer started on {self.host}:{self.port}")
+            print(f"Waiting for connections...")
+            print(f"Press Ctrl+C to stop the server\n")
             
-            # Accept connections
             while self.running:
                 try:
                     client_socket, address = self.server_socket.accept()
                     print(f"[{datetime.now().strftime('%H:%M:%S')}] New connection from {address}")
                     
-                    # Handle client in new thread
                     client_thread = threading.Thread(
                         target=self._handle_client,
                         args=(client_socket, address)
@@ -124,7 +110,7 @@ class MessageServer:
                     self.client_threads.append(client_thread)
                     
                 except KeyboardInterrupt:
-                    print("\n\n✓ Server shutting down...")
+                    print("\n\nServer shutting down...")
                     break
                 except Exception as e:
                     if self.running:
@@ -142,17 +128,14 @@ class MessageServer:
         
         try:
             while self.running:
-                # Receive request from client
                 data = client_socket.recv(4096)
                 if not data:
                     break
                 
-                # Parse request
                 try:
                     request = json.loads(data.decode('utf-8'))
                     command = request.get('command')
                     
-                    # Handle different commands
                     if command == 'LOGIN':
                         response = self._handle_login(request, client_socket)
                         if response['status'] == 'success':
@@ -184,7 +167,6 @@ class MessageServer:
                     else:
                         response = {'status': 'error', 'message': 'Unknown command'}
                     
-                    # Send response
                     self._send_response(client_socket, response)
                 
                 except json.JSONDecodeError:
@@ -195,7 +177,6 @@ class MessageServer:
             print(f"Error handling client {address}: {e}")
         
         finally:
-            # Cleanup
             if username:
                 with self.lock:
                     if username in self.clients:
@@ -244,12 +225,10 @@ class MessageServer:
         success, message = self.auth.register_user(username, password, email)
         
         if success:
-            # Generate ElGamal keys
             key_pair = ElGamal.generate_keys(bits=16)
             with self.lock:
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
-                # Save keys to storage
                 self.storage.save_user_keys(self.user_keys)
             
             print(f"[{datetime.now().strftime('%H:%M:%S')}] New user registered: {username}")
@@ -274,14 +253,11 @@ class MessageServer:
         encryption_method = request.get('encryption_method')
         encryption_params = request.get('encryption_params', {})
         
-        # Verify receiver exists
         if not self.kdc.is_user_registered(receiver):
             return {'status': 'error', 'message': f"User '{receiver}' not found"}
         
-        # Compute hash
         message_hash = MessageIntegrity.compute_hash(plaintext)
         
-        # Encrypt message based on method
         try:
             if encryption_method == 'Caesar':
                 shift = encryption_params.get('shift', 3)
@@ -297,20 +273,17 @@ class MessageServer:
                 key = encryption_params.get('key')
                 cipher = XORStreamCipher(key=key if key else None)
                 ciphertext = cipher.encrypt(plaintext)
-                # Store key for receiver
                 encryption_params['key_hex'] = cipher.get_key_hex()
             
             elif encryption_method == 'Block':
                 key = encryption_params.get('key')
                 cipher = MiniBlockCipher(key=key if key else None)
                 ciphertext = cipher.encrypt(plaintext)
-                # Store key for receiver
                 encryption_params['key_hex'] = cipher.get_key_hex()
             
             else:
                 return {'status': 'error', 'message': 'Invalid encryption method'}
             
-            # Add to blockchain
             with self.lock:
                 block = self.blockchain.add_message_block(
                     sender=sender,
@@ -322,7 +295,6 @@ class MessageServer:
             
             print(f"[{datetime.now().strftime('%H:%M:%S')}] Message: {sender} -> {receiver} (Block #{block.index})")
             
-            # Notify receiver if online
             if receiver in self.clients:
                 notification = {
                     'type': 'NEW_MESSAGE',
@@ -381,7 +353,6 @@ class MessageServer:
             all_users = self.kdc.list_registered_users()
             online_users = list(self.clients.keys())
         
-        # Filter out current user
         available_users = [u for u in all_users if u != current_user]
         
         return {
@@ -426,7 +397,6 @@ class MessageServer:
         """Stop the server"""
         self.running = False
         
-        # Close all client connections
         with self.lock:
             for username, client_socket in self.clients.items():
                 try:
@@ -435,14 +405,13 @@ class MessageServer:
                     pass
             self.clients.clear()
         
-        # Close server socket
         if self.server_socket:
             try:
                 self.server_socket.close()
             except:
                 pass
         
-        print("\n✓ Server stopped")
+        print("\nServer stopped")
 
 
 def main():

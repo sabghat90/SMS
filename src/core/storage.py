@@ -35,13 +35,10 @@ class SecureStorage:
         self.keys_file = os.path.join(data_dir, "user_keys.json.enc")
         self.integrity_file = os.path.join(data_dir, ".integrity")
         
-        # Create data directory if it doesn't exist
         os.makedirs(data_dir, exist_ok=True)
         
-        # Lab 06: Derive encryption key from master password using SHA-256
         self.encryption_key = self._derive_key(master_password)
         
-        # Lab 05: Initialize XOR Stream Cipher with derived key
         self.cipher = XORStreamCipher(key=self.encryption_key)
     
     def _derive_key(self, password):
@@ -54,9 +51,7 @@ class SecureStorage:
         Returns:
             16-byte encryption key
         """
-        # Use SHA-256 hash as key derivation
         hash_value = MessageIntegrity.compute_hash(password)
-        # Take first 32 hex chars (16 bytes) for XOR cipher key
         return bytes.fromhex(hash_value[:32])
     
     def _encrypt_data(self, data):
@@ -69,13 +64,10 @@ class SecureStorage:
         Returns:
             Tuple of (encrypted_hex, hmac_signature)
         """
-        # Convert to JSON
         json_data = json.dumps(data, indent=2)
         
-        # Lab 05: Encrypt using XOR Stream Cipher
         encrypted_hex = self.cipher.encrypt(json_data)
         
-        # Lab 06: Create HMAC for integrity verification
         hmac_signature = MessageIntegrity.compute_hmac(
             encrypted_hex, 
             self.encryption_key.hex()
@@ -95,7 +87,6 @@ class SecureStorage:
             Decrypted dictionary or None if decryption/verification fails
         """
         try:
-            # Lab 06: Verify HMAC integrity if provided
             if expected_hmac:
                 computed_hmac = MessageIntegrity.compute_hmac(
                     encrypted_hex,
@@ -106,10 +97,8 @@ class SecureStorage:
                     print("⚠ Warning: Data integrity check failed (HMAC mismatch)")
                     return None
             
-            # Lab 05: Decrypt using XOR Stream Cipher
             decrypted_json = self.cipher.decrypt(encrypted_hex)
             
-            # Parse JSON
             return json.loads(decrypted_json)
             
         except Exception as e:
@@ -124,17 +113,14 @@ class SecureStorage:
             users_dict: Dictionary of user data
         """
         try:
-            # Add metadata
             data_to_save = {
                 'users': users_dict,
                 'last_updated': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'version': '2.0_lab_concepts'
             }
             
-            # Lab 05 + Lab 06: Encrypt and create HMAC
             encrypted_hex, hmac_signature = self._encrypt_data(data_to_save)
             
-            # Save both encrypted data and HMAC
             combined_data = {
                 'encrypted': encrypted_hex,
                 'hmac': hmac_signature
@@ -143,7 +129,6 @@ class SecureStorage:
             with open(self.users_file, 'w') as f:
                 json.dump(combined_data, f)
             
-            # Lab 06: Store file hash for additional integrity check
             self._save_integrity_hash('users', encrypted_hex)
             
             return True, "User data saved securely (XOR+HMAC)"
@@ -170,7 +155,6 @@ class SecureStorage:
             if not encrypted_hex:
                 return {}
             
-            # Lab 05 + Lab 06: Decrypt with HMAC verification
             data = self._decrypt_data(encrypted_hex, hmac_signature)
             
             if data and 'users' in data:
@@ -188,7 +172,6 @@ class SecureStorage:
             keys_dict: Dictionary mapping username to key information
         """
         try:
-            # Convert ElGamal key objects to dictionaries
             serializable_keys = {}
             for username, key_obj in keys_dict.items():
                 if hasattr(key_obj, 'p'):  # ElGamal key pair object
@@ -207,7 +190,6 @@ class SecureStorage:
                 'version': '2.0_lab_concepts'
             }
             
-            # Lab 05 + Lab 06: Encrypt and create HMAC
             encrypted_hex, hmac_signature = self._encrypt_data(data_to_save)
             
             combined_data = {
@@ -218,7 +200,6 @@ class SecureStorage:
             with open(self.keys_file, 'w') as f:
                 json.dump(combined_data, f)
             
-            # Lab 06: Store file hash for additional integrity check
             self._save_integrity_hash('keys', encrypted_hex)
             
             return True, "User keys saved securely (XOR+HMAC)"
@@ -245,7 +226,6 @@ class SecureStorage:
             if not encrypted_hex:
                 return {}
             
-            # Lab 05 + Lab 06: Decrypt with HMAC verification
             data = self._decrypt_data(encrypted_hex, hmac_signature)
             
             if data and 'keys' in data:
@@ -264,22 +244,18 @@ class SecureStorage:
             data: Data to hash
         """
         try:
-            # Lab 06: Compute SHA-256 hash
             data_hash = MessageIntegrity.compute_hash(data)
             
-            # Load existing integrity data
             integrity_data = {}
             if os.path.exists(self.integrity_file):
                 with open(self.integrity_file, 'r') as f:
                     integrity_data = json.load(f)
             
-            # Update with new hash
             integrity_data[file_type] = {
                 'hash': data_hash,
                 'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
             
-            # Save integrity file
             with open(self.integrity_file, 'w') as f:
                 json.dump(integrity_data, f, indent=2)
                 
@@ -300,7 +276,6 @@ class SecureStorage:
             if not os.path.exists(self.integrity_file):
                 return False, "No integrity data found"
             
-            # Load integrity data
             with open(self.integrity_file, 'r') as f:
                 integrity_data = json.load(f)
             
@@ -309,7 +284,6 @@ class SecureStorage:
             
             expected_hash = integrity_data[file_type]['hash']
             
-            # Load current file data
             file_path = self.users_file if file_type == 'users' else self.keys_file
             if not os.path.exists(file_path):
                 return False, f"{file_type} file not found"
@@ -319,7 +293,6 @@ class SecureStorage:
             
             current_encrypted = current_data.get('encrypted', '')
             
-            # Lab 06: Compute hash and compare
             current_hash = MessageIntegrity.compute_hash(current_encrypted)
             
             if current_hash == expected_hash:
@@ -339,7 +312,6 @@ class SecureStorage:
             blockchain_data: List of block dictionaries
         """
         try:
-            # Lab 06: Add SHA-256 hash for blockchain integrity
             blockchain_json = json.dumps(blockchain_data, sort_keys=True)
             blockchain_hash = MessageIntegrity.compute_hash(blockchain_json)
             
@@ -374,7 +346,6 @@ class SecureStorage:
             if not data or 'blockchain' not in data:
                 return None
             
-            # Lab 06: Verify blockchain integrity if hash exists
             if 'hash' in data:
                 blockchain_json = json.dumps(data['blockchain'], sort_keys=True)
                 computed_hash = MessageIntegrity.compute_hash(blockchain_json)
@@ -412,13 +383,11 @@ class SecureStorage:
         
         if os.path.exists(self.users_file):
             info['users_file_size'] = os.path.getsize(self.users_file)
-            # Verify integrity
             valid, msg = self.verify_file_integrity('users')
             info['users_integrity'] = msg
         
         if os.path.exists(self.keys_file):
             info['keys_file_size'] = os.path.getsize(self.keys_file)
-            # Verify integrity
             valid, msg = self.verify_file_integrity('keys')
             info['keys_integrity'] = msg
         
@@ -445,27 +414,22 @@ class SecureStorage:
                 'method': 'Lab concepts (XOR + HMAC)'
             }
             
-            # Backup users
             if os.path.exists(self.users_file):
                 backup_file = os.path.join(backup_path, f"users_{timestamp}.json.enc")
                 with open(self.users_file, 'r') as src:
                     data = src.read()
                     with open(backup_file, 'w') as dst:
                         dst.write(data)
-                    # Lab 06: Store hash of backup
                     backup_manifest['files']['users'] = MessageIntegrity.compute_hash(data)
             
-            # Backup keys
             if os.path.exists(self.keys_file):
                 backup_file = os.path.join(backup_path, f"keys_{timestamp}.json.enc")
                 with open(self.keys_file, 'r') as src:
                     data = src.read()
                     with open(backup_file, 'w') as dst:
                         dst.write(data)
-                    # Lab 06: Store hash of backup
                     backup_manifest['files']['keys'] = MessageIntegrity.compute_hash(data)
             
-            # Save backup manifest
             manifest_file = os.path.join(backup_path, f"manifest_{timestamp}.json")
             with open(manifest_file, 'w') as f:
                 json.dump(backup_manifest, f, indent=2)

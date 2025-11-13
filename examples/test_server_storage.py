@@ -4,18 +4,15 @@ Test server initialization and data directory creation
 import os
 import shutil
 
-# Clean up first
 if os.path.exists("data"):
     shutil.rmtree("data")
     print("✓ Cleaned up existing data directory")
 
-# Initialize server
 from src.network.server import MessageServer
 
 print("\nInitializing server...")
 server = MessageServer()
 
-# Check data directory
 print("\n" + "="*60)
 print("Data Directory Status:")
 print("="*60)

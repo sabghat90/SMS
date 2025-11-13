@@ -90,14 +90,12 @@ class MessageBlockchain:
         self.difficulty = difficulty
         self.storage = storage
         
-        # Try to load existing blockchain from temp storage
         if self.storage:
             loaded_chain = self.storage.load_blockchain_temp()
             if loaded_chain:
                 self._restore_from_dict(loaded_chain)
                 return
         
-        # Create new blockchain if no stored data
         self.create_genesis_block()
     
     def _restore_from_dict(self, chain_data):
@@ -168,13 +166,10 @@ class MessageBlockchain:
             previous_hash=previous_block.hash
         )
         
-        # Mine the block
         new_block.mine_block(self.difficulty)
         
-        # Add to chain
         self.chain.append(new_block)
         
-        # Save to temporary storage
         self._save_to_storage()
         
         return new_block
@@ -198,13 +193,10 @@ class MessageBlockchain:
             previous_hash=previous_block.hash
         )
         
-        # Mine the block
         new_block.mine_block(self.difficulty)
         
-        # Add to chain
         self.chain.append(new_block)
         
-        # Save to temporary storage
         self._save_to_storage()
         
         return new_block
@@ -223,11 +215,9 @@ class MessageBlockchain:
             current_block = self.chain[i]
             previous_block = self.chain[i - 1]
             
-            # Verify current block's hash
             if current_block.hash != current_block.calculate_hash():
                 return False
             
-            # Verify link to previous block
             if current_block.previous_hash != previous_block.hash:
                 return False
         

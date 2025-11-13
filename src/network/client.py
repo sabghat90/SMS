@@ -7,9 +7,6 @@ Run this in separate terminals for different users
 import socket
 import json
 import threading
-import sys
-import time
-from datetime import datetime
 from src.core.classical_ciphers import CaesarCipher, VigenereCipher
 from src.core.modern_ciphers import XORStreamCipher, MiniBlockCipher
 from src.core.hashing import MessageIntegrity
@@ -29,7 +26,6 @@ class MessageClient:
         self.session_id = None
         self.running = False
         
-        # For receiving notifications
         self.notification_thread = None
     
     def connect(self):
@@ -39,11 +35,11 @@ class MessageClient:
             self.socket.connect((self.host, self.port))
             self.connected = True
             self.running = True
-            print(f"\n✓ Connected to server at {self.host}:{self.port}")
+            print(f"\nConnected to server at {self.host}:{self.port}")
             return True
         except Exception as e:
-            print(f"\n✗ Could not connect to server: {e}")
-            print(f"  Make sure the server is running!")
+            print(f"\nCould not connect to server: {e}")
+            print(f"Make sure the server is running!")
             return False
     
     def disconnect(self):
@@ -60,7 +56,7 @@ class MessageClient:
                 pass
         
         self.connected = False
-        print("\n✓ Disconnected from server")
+        print("\nDisconnected from server")
     
     def _send_request(self, request):
         """Send request to server"""
@@ -69,7 +65,7 @@ class MessageClient:
             self.socket.send(request_json.encode('utf-8'))
             return True
         except Exception as e:
-            print(f"\n✗ Error sending request: {e}")
+            print(f"\nError sending request: {e}")
             return False
     
     def _receive_response(self, timeout=5):
@@ -99,8 +95,8 @@ class MessageClient:
                     try:
                         notification = json.loads(data.decode('utf-8'))
                         if notification.get('type') == 'NEW_MESSAGE':
-                            print(f"\n\n🔔 New message from {notification['from']}!")
-                            print("   Type '2' to view messages\n")
+                            print(f"\n\nNew message from {notification['from']}!")
+                            print("Type '2' to view messages\n")
                             print("> ", end='', flush=True)
                     except:
                         pass
@@ -127,10 +123,9 @@ class MessageClient:
             if response and response['status'] == 'success':
                 self.username = username
                 self.session_id = response['session_id']
-                print(f"\n✓ {response['message']}")
-                print(f"  Welcome, {self.username}!")
+                print(f"\n{response['message']}")
+                print(f"Welcome, {self.username}!")
                 
-                # Start notification listener
                 self.notification_thread = threading.Thread(
                     target=self._listen_for_notifications,
                     daemon=True
@@ -139,7 +134,7 @@ class MessageClient:
                 
                 return True
             else:
-                print(f"\n✗ {response.get('message', 'Login failed')}")
+                print(f"\n{response.get('message', 'Login failed')}")
                 return False
         
         return False
@@ -162,7 +157,7 @@ class MessageClient:
             response = self._receive_response()
             
             if response and response['status'] == 'success':
-                print(f"\n✓ {response['message']}")
+                print(f"\n{response['message']}")
                 if 'key_info' in response:
                     print(f"\n  ElGamal Key Generated:")
                     print(f"  - Prime (p): {response['key_info']['p']}")
@@ -170,7 +165,7 @@ class MessageClient:
                     print(f"  - Public key: {response['key_info']['public_key']}")
                 return True
             else:
-                print(f"\n✗ {response.get('message', 'Registration failed')}")
+                print(f"\n{response.get('message', 'Registration failed')}")
                 return False
         
         return False
@@ -179,7 +174,6 @@ class MessageClient:
         """Send encrypted message"""
         print("\n--- SEND MESSAGE ---")
         
-        # Get list of users
         request = {
             'command': 'GET_USERS',
             'username': self.username
@@ -198,22 +192,21 @@ class MessageClient:
                 
                 print(f"\nAvailable users:")
                 for user in users:
-                    status = "🟢 online" if user in online_users else "⚫ offline"
+                    status = "+ online" if user in online_users else "X offline"
                     print(f"  - {user} ({status})")
                 
                 receiver = input("\nReceiver: ").strip()
                 
                 if receiver not in users:
-                    print(f"\n✗ User '{receiver}' not found")
+                    print(f"\nUser '{receiver}' not found")
                     return
                 
                 message = input("Message: ").strip()
                 
                 if not message:
-                    print("\n✗ Message cannot be empty")
+                    print("\nMessage cannot be empty")
                     return
                 
-                # Select encryption method
                 print("\n--- SELECT ENCRYPTION ---")
                 print("1. Caesar Cipher")
                 print("2. Vigenère Cipher")
@@ -233,7 +226,7 @@ class MessageClient:
                 elif choice == '2':
                     key = input("Vigenère key: ").strip()
                     if not key:
-                        print("✗ Key required")
+                        print("Key required")
                         return
                     encryption_method = 'Vigenere'
                     encryption_params['key'] = key
@@ -251,10 +244,9 @@ class MessageClient:
                         encryption_params['key'] = key
                 
                 else:
-                    print("\n✗ Invalid choice")
+                    print("\nInvalid choice")
                     return
                 
-                # Send message
                 request = {
                     'command': 'SEND_MESSAGE',
                     'sender': self.username,
@@ -268,19 +260,18 @@ class MessageClient:
                     response = self._receive_response(timeout=10)
                     
                     if response and response['status'] == 'success':
-                        print(f"\n✓ Message sent successfully!")
-                        print(f"  Block #{response['block_index']}")
-                        print(f"  Block hash: {response['block_hash'][:32]}...")
-                        print(f"  Message hash: {response['message_hash'][:32]}...")
+                        print(f"\nMessage sent successfully!")
+                        print(f"Block #{response['block_index']}")
+                        print(f"Block hash: {response['block_hash'][:32]}...")
+                        print(f"Message hash: {response['message_hash'][:32]}...")
                         
-                        # Show encryption key if generated
                         if 'encryption_params' in response:
                             params = response['encryption_params']
                             if 'key_hex' in params:
-                                print(f"\n  ⚠️  SAVE THIS KEY FOR DECRYPTION:")
-                                print(f"  Key (hex): {params['key_hex']}")
+                                print(f"\nSAVE THIS KEY FOR DECRYPTION:")
+                                print(f"Key (hex): {params['key_hex']}")
                     else:
-                        print(f"\n✗ {response.get('message', 'Failed to send')}")
+                        print(f"\n{response.get('message', 'Failed to send')}")
     
     def view_messages(self):
         """View received messages"""
@@ -313,7 +304,6 @@ class MessageClient:
                     print(f"Ciphertext: {msg['ciphertext'][:50]}...")
                     print(f"Hash: {msg['message_hash'][:32]}...")
                     
-                    # Option to decrypt if receiver
                     if msg['receiver'] == self.username:
                         decrypt = input("\nDecrypt this message? (y/n): ").strip().lower()
                         if decrypt == 'y':
@@ -360,21 +350,20 @@ class MessageClient:
                 return
             
             if plaintext:
-                print(f"\n✓ Decrypted message: {plaintext}")
+                print(f"\nDecrypted message: {plaintext}")
                 
-                # Verify hash
                 print("\n[Verifying message integrity...]")
                 is_valid, computed_hash = MessageIntegrity.verify_hash(plaintext, original_hash)
                 
                 if is_valid:
-                    print("✓ Message integrity verified! Hash matches.")
+                    print("Message integrity verified! Hash matches.")
                 else:
-                    print("✗ WARNING: Message integrity check failed!")
-                    print(f"  Expected: {original_hash[:32]}...")
-                    print(f"  Computed: {computed_hash[:32]}...")
+                    print("WARNING: Message integrity check failed!")
+                    print(f"Expected: {original_hash[:32]}...")
+                    print(f"Computed: {computed_hash[:32]}...")
         
         except Exception as e:
-            print(f"✗ Decryption failed: {e}")
+            print(f"Decryption failed: {e}")
     
     def view_blockchain(self):
         """View blockchain"""
@@ -400,12 +389,12 @@ class MessageClient:
                     if block['index'] > 0:
                         data = block['data']
                         print(f"\nMessage Data:")
-                        print(f"  Sender: {data['sender']}")
-                        print(f"  Receiver: {data['receiver']}")
-                        print(f"  Method: {data['encryption_method']}")
+                        print(f"Sender: {data['sender']}")
+                        print(f"Receiver: {data['receiver']}")
+                        print(f"Method: {data['encryption_method']}")
                     print()
             else:
-                print(f"\n✗ Failed to get blockchain")
+                print(f"\nFailed to get blockchain")
     
     def verify_blockchain(self):
         """Verify blockchain integrity"""
@@ -422,14 +411,14 @@ class MessageClient:
                 chain_length = response['chain_length']
                 
                 if is_valid:
-                    print(f"\n✓ {message}")
-                    print(f"  All {chain_length} blocks verified")
-                    print("  Chain integrity: INTACT")
+                    print(f"\n{message}")
+                    print(f"All {chain_length} blocks verified")
+                    print("Chain integrity: INTACT")
                 else:
-                    print(f"\n✗ {message}")
-                    print("  Chain integrity: COMPROMISED")
+                    print(f"\n{message}")
+                    print("Chain integrity: COMPROMISED")
             else:
-                print(f"\n✗ Verification failed")
+                print(f"\nVerification failed")
     
     def display_banner(self):
         """Display client banner"""
@@ -456,7 +445,6 @@ class MessageClient:
         if not self.connect():
             return
         
-        # Login or register
         while True:
             print("\n1. Login")
             print("2. Register")
@@ -473,9 +461,8 @@ class MessageClient:
                 self.disconnect()
                 return
             else:
-                print("\n✗ Invalid choice")
+                print("\nInvalid choice")
         
-        # Main menu loop
         while self.running:
             try:
                 self.display_menu()
@@ -498,14 +485,14 @@ class MessageClient:
                     self.disconnect()
                     break
                 else:
-                    print("\n✗ Invalid choice")
+                    print("\nInvalid choice")
             
             except KeyboardInterrupt:
                 print("\n\nInterrupted. Logging out...")
                 self.disconnect()
                 break
             except Exception as e:
-                print(f"\n✗ Error: {e}")
+                print(f"\nError: {e}")
 
 
 def main():

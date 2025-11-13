@@ -62,7 +62,6 @@ class TestCaesarCipher(unittest.TestCase):
         cipher = CaesarCipher(shift=3)
         plaintext = "HELLO, WORLD! 123"
         encrypted = cipher.encrypt(plaintext)
-        # Only letters should be encrypted
         self.assertIn(",", encrypted)
         self.assertIn("!", encrypted)
         self.assertIn("1", encrypted)
@@ -96,7 +95,6 @@ class TestVigenereCipher(unittest.TestCase):
     def test_repeating_key(self):
         """Test that key repeats for longer messages"""
         cipher = VigenereCipher(key="AB")
-        # With key "AB", first char shifts by 0, second by 1, then repeat
         plaintext = "AAAA"
         encrypted = cipher.encrypt(plaintext)
         self.assertEqual(encrypted, "ABAB")

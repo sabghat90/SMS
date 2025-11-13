@@ -9,16 +9,13 @@ print("="*60)
 print("Secure Storage Demo")
 print("="*60)
 
-# Initialize storage
 storage = SecureStorage()
 print(f"\n✓ Storage initialized")
 
-# Create a demo user
 auth = UserAuthentication(storage=storage)
 auth.register_user('demo_user', 'password123', 'demo@example.com')
 print(f"✓ Demo user created and saved")
 
-# Show data directory
 print(f"\n📁 Data Directory: {os.path.abspath(storage.data_dir)}")
 print("\nFiles Created:")
 
@@ -26,7 +23,6 @@ for filename in sorted(os.listdir(storage.data_dir)):
     filepath = os.path.join(storage.data_dir, filename)
     size = os.path.getsize(filepath)
     
-    # Determine file type
     if filename == '.key':
         file_type = "Encryption Key (CRITICAL - Keep Secure!)"
         icon = "🔑"
@@ -42,7 +38,6 @@ for filename in sorted(os.listdir(storage.data_dir)):
     
     print(f"  {icon} {filename:<25} ({size:>6} bytes) - {file_type}")
 
-# Show storage info
 print("\n" + "="*60)
 print("Storage Information:")
 print("="*60)

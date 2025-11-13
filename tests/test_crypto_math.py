@@ -38,10 +38,8 @@ class TestCryptoMath(unittest.TestCase):
         """Test extended GCD algorithm"""
         g, x, y = extended_gcd(48, 18)
         
-        # Check that gcd is correct
         self.assertEqual(g, 6)
         
-        # Check that 48*x + 18*y = gcd
         self.assertEqual(48 * x + 18 * y, g)
     
     def test_extended_gcd_coprime(self):
@@ -53,13 +51,11 @@ class TestCryptoMath(unittest.TestCase):
     
     def test_mod_inverse_exists(self):
         """Test modular inverse when it exists"""
-        # 3 * 5 ≡ 1 (mod 7)
         inv = mod_inverse(3, 7)
         self.assertEqual((3 * inv) % 7, 1)
     
     def test_mod_inverse_coprime(self):
         """Test modular inverse with various coprime pairs"""
-        # Test several cases
         test_cases = [(7, 26), (15, 26), (5, 11)]
         
         for a, m in test_cases:
@@ -69,7 +65,6 @@ class TestCryptoMath(unittest.TestCase):
     
     def test_mod_inverse_not_exists(self):
         """Test modular inverse when it doesn't exist"""
-        # 6 and 9 are not coprime (gcd = 3)
         with self.assertRaises(ValueError):
             mod_inverse(6, 9)
     
@@ -102,23 +97,18 @@ class TestCryptoMath(unittest.TestCase):
     
     def test_power_mod_basic(self):
         """Test modular exponentiation"""
-        # 2^10 mod 1000 = 1024 mod 1000 = 24
         result = power_mod(2, 10, 1000)
         self.assertEqual(result, 24)
     
     def test_power_mod_large(self):
         """Test modular exponentiation with large numbers"""
-        # This would overflow with normal exponentiation
         result = power_mod(3, 100, 7)
         
-        # Should be same as (3^100) % 7
-        # But computed efficiently
         self.assertIsInstance(result, int)
         self.assertLess(result, 7)
     
     def test_power_mod_zero_exponent(self):
         """Test modular exponentiation with zero exponent"""
-        # a^0 = 1 for any a
         result = power_mod(5, 0, 7)
         self.assertEqual(result, 1)
     
@@ -129,7 +119,6 @@ class TestCryptoMath(unittest.TestCase):
     
     def test_fermat_little_theorem(self):
         """Test Fermat's Little Theorem using power_mod"""
-        # For prime p and a not divisible by p: a^(p-1) ≡ 1 (mod p)
         p = 7
         a = 3
         

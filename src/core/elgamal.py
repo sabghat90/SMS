@@ -37,16 +37,12 @@ class ElGamal:
             - private_key (x): random secret
             - public_key (y): g^x mod p
         """
-        # Generate large prime p
         p = generate_prime(bits)
         
-        # Find primitive root g of p
         g = find_primitive_root(p)
         
-        # Generate private key (random number 1 < x < p-1)
         private_key = random.randint(2, p - 2)
         
-        # Compute public key: y = g^x mod p
         public_key = power_mod(g, private_key, p)
         
         return ElGamalKeyPair(p, g, private_key, public_key)
@@ -67,24 +63,18 @@ class ElGamal:
         g = public_key_pair.g
         y = public_key_pair.public_key
         
-        # Convert string to integer if needed
         if isinstance(plaintext, str):
             m = int.from_bytes(plaintext.encode(), 'big')
         else:
             m = plaintext
         
-        # Ensure message is less than p
         if m >= p:
             raise ValueError(f"Message too large. Must be < {p}")
         
-        # Choose random k (1 < k < p-1)
         k = random.randint(2, p - 2)
         
-        # Compute ciphertext pair
-        # c1 = g^k mod p
         c1 = power_mod(g, k, p)
         
-        # c2 = m * y^k mod p
         c2 = (m * power_mod(y, k, p)) % p
         
         return (c1, c2)
@@ -105,14 +95,11 @@ class ElGamal:
         p = private_key_pair.p
         x = private_key_pair.private_key
         
-        # Compute s = c1^x mod p
         s = power_mod(c1, x, p)
         
-        # Compute s^-1 mod p (modular inverse)
         from crypto_math import mod_inverse
         s_inv = mod_inverse(s, p)
         
-        # Recover plaintext: m = c2 * s^-1 mod p
         m = (c2 * s_inv) % p
         
         return m
@@ -124,8 +111,6 @@ class ElGamal:
         """
         m = ElGamal.decrypt(ciphertext, private_key_pair)
         
-        # Convert integer back to bytes/string
-        # Calculate number of bytes needed
         num_bytes = (m.bit_length() + 7) // 8
         if num_bytes == 0:
             num_bytes = 1
@@ -145,8 +130,6 @@ class KeyDistributionCenter:
     """
     
     def __init__(self):
-        # Store public keys for all users
-        # Format: {username: ElGamalKeyPair}
         self.public_keys = {}
         self.key_registry = {}
     

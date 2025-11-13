@@ -29,21 +29,17 @@ class SecureMessagingSystem:
     """
     
     def __init__(self):
-        # Initialize secure storage
         self.storage = SecureStorage(data_dir="data")
         
-        # Initialize all components with storage
         self.auth = UserAuthentication(storage=self.storage)
         self.kdc = KeyDistributionCenter()
         self.blockchain = MessageBlockchain(difficulty=2, storage=self.storage)
         self.current_session = None
         self.current_username = None
         
-        # Load existing user keys from storage
         self.user_keys = {}
         stored_keys = self.storage.load_user_keys()
         
-        # Convert stored key dictionaries back to ElGamalKeyPair objects
         for username, key_data in stored_keys.items():
             if isinstance(key_data, dict):
                 key_obj = ElGamalKeyPair(
@@ -53,7 +49,6 @@ class SecureMessagingSystem:
                     public_key=key_data['public_key']
                 )
                 self.user_keys[username] = key_obj
-                # Register with KDC
                 self.kdc.register_user(username, key_obj)
     
     def display_banner(self):
@@ -93,15 +88,12 @@ class SecureMessagingSystem:
         print(f"\n{message}")
         
         if success:
-            # Generate ElGamal keys for the user
             print("\nGenerating ElGamal key pair...")
             key_pair = ElGamal.generate_keys(bits=16)
             self.user_keys[username] = key_pair
             
-            # Register public key with KDC
             self.kdc.register_user(username, key_pair)
             
-            # Save keys to secure storage
             self.storage.save_user_keys(self.user_keys)
             
             print(f"✓ Public key registered with Key Distribution Center")
@@ -119,7 +111,6 @@ class SecureMessagingSystem:
         success, message = self.auth.login(username, password)
         
         if success:
-            # Extract session ID from message
             self.current_session = message.split(": ")[1]
             self.current_username = username
             print(f"\n✓ {message}")
@@ -166,7 +157,6 @@ class SecureMessagingSystem:
         """Send encrypted message"""
         print("\n--- SEND ENCRYPTED MESSAGE ---")
         
-        # Check if there are other users
         registered_users = self.kdc.list_registered_users()
         available_users = [u for u in registered_users if u != self.current_username]
         
@@ -177,7 +167,6 @@ class SecureMessagingSystem:
         print(f"Available users: {', '.join(available_users)}")
         receiver = input("\nEnter receiver username: ").strip()
         
-        # Validate receiver
         if not self.kdc.is_user_registered(receiver):
             print(f"✗ User '{receiver}' not found in KDC")
             return
@@ -186,28 +175,23 @@ class SecureMessagingSystem:
             print("✗ Cannot send message to yourself")
             return
         
-        # Get message
         plaintext = input("\nEnter message: ").strip()
         
         if not plaintext:
             print("✗ Message cannot be empty")
             return
         
-        # Step 1: Compute hash of plaintext (Lab 06)
         print("\n[Step 1] Computing SHA-256 hash of message...")
         message_hash = MessageIntegrity.compute_hash(plaintext)
         print(f"✓ Message hash: {message_hash[:32]}...")
         
-        # Step 2: Select encryption method
         encryption_method, cipher = self.select_encryption_method()
         print(f"\n[Step 2] Encrypting with {encryption_method}...")
         
-        # Step 3: Encrypt message
         ciphertext = cipher.encrypt(plaintext)
         print(f"✓ Message encrypted")
         print(f"  Ciphertext preview: {str(ciphertext)[:50]}...")
         
-        # Step 4: Store in blockchain (Lab 07)
         print(f"\n[Step 3] Adding to blockchain...")
         block = self.blockchain.add_message_block(
             sender=self.current_username,
@@ -246,7 +230,6 @@ class SecureMessagingSystem:
             print(f"Hash: {data['message_hash'][:32]}...")
             print(f"Block Hash: {block.hash}")
             
-            # Option to decrypt if user is receiver
             if data['receiver'] == self.current_username:
                 decrypt_choice = input("\nDecrypt this message? (y/n): ").strip().lower()
                 if decrypt_choice == 'y':
@@ -262,7 +245,6 @@ class SecureMessagingSystem:
         print(f"\n[Decrypting with {encryption_method}]")
         
         try:
-            # Recreate cipher based on method
             if encryption_method == "Caesar Cipher":
                 shift = int(input("Enter shift value used: ") or "3")
                 cipher = CaesarCipher(shift=shift)
@@ -291,7 +273,6 @@ class SecureMessagingSystem:
             
             print(f"\n✓ Decrypted message: {plaintext}")
             
-            # Verify hash (Lab 06)
             print("\n[Verifying message integrity...]")
             is_valid, computed_hash = MessageIntegrity.verify_hash(plaintext, original_hash)
             
@@ -372,7 +353,6 @@ class SecureMessagingSystem:
         """Main application loop"""
         self.display_banner()
         
-        # Pre-register some test users for demo (only if no users exist)
         self.setup_demo_users()
         
         while True:
@@ -380,7 +360,6 @@ class SecureMessagingSystem:
             choice = input("\nEnter your choice: ").strip()
             
             if not self.current_username:
-                # Not logged in menu
                 if choice == "1":
                     self.register()
                 elif choice == "2":
@@ -393,7 +372,6 @@ class SecureMessagingSystem:
                 else:
                     print("\n✗ Invalid choice")
             else:
-                # Logged in menu
                 if choice == "1":
                     self.send_message()
                 elif choice == "2":
@@ -415,7 +393,6 @@ class SecureMessagingSystem:
     
     def setup_demo_users(self):
         """Setup demo users for testing"""
-        # Only setup demo users if no users exist
         if len(self.auth.users) > 0:
             print("Found existing users in storage. Skipping demo setup.")
             return
@@ -429,13 +406,11 @@ class SecureMessagingSystem:
         for username, password, email in demo_users:
             success, _ = self.auth.register_user(username, password, email)
             if success:
-                # Generate keys
                 key_pair = ElGamal.generate_keys(bits=16)
                 self.user_keys[username] = key_pair
                 self.kdc.register_user(username, key_pair)
                 print(f"  ✓ Demo user '{username}' registered (password: {password})")
         
-        # Save all demo user keys
         if self.user_keys:
             self.storage.save_user_keys(self.user_keys)
 

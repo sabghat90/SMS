@@ -109,22 +109,18 @@ def run_quick_tests():
     print_section("Running Quick Tests")
     
     try:
-        # Test storage
         from src.core.storage import SecureStorage
         storage = SecureStorage(data_dir="test_setup_data")
         print("✓ Storage module working")
         
-        # Test authentication
         from src.core.authentication import UserAuthentication
         auth = UserAuthentication(storage=storage)
         print("✓ Authentication module working")
         
-        # Test blockchain
         from src.core.blockchain import MessageBlockchain
         blockchain = MessageBlockchain(difficulty=1, storage=storage)
         print("✓ Blockchain module working")
         
-        # Test ciphers
         from src.core.classical_ciphers import CaesarCipher
         cipher = CaesarCipher()
         print("✓ Classical ciphers working")
@@ -133,12 +129,10 @@ def run_quick_tests():
         xor = XORStreamCipher()
         print("✓ Modern ciphers working")
         
-        # Test ElGamal
         from src.core.elgamal import ElGamal
         keys = ElGamal.generate_keys(bits=8)
         print("✓ ElGamal working")
         
-        # Cleanup
         import shutil
         if os.path.exists("test_setup_data"):
             shutil.rmtree("test_setup_data")
@@ -184,7 +178,6 @@ def main():
     """Main setup verification"""
     print_header("Secure Messaging System - Setup & Verification")
     
-    # Change to project root
     script_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(script_dir)
     
@@ -205,7 +198,6 @@ def main():
             print(f"\n❌ Error in {name}: {str(e)}")
             results.append((name, False))
     
-    # Summary
     print_section("Summary")
     all_passed = True
     for name, result in results:

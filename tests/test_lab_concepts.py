@@ -7,7 +7,6 @@ print("=" * 60)
 print("TESTING LAB CONCEPTS IMPLEMENTATION")
 print("=" * 60)
 
-# Test 1: Import storage module
 print("\n[Test 1] Loading Storage Module...")
 try:
     from src.core.storage import SecureStorage
@@ -16,7 +15,6 @@ except ImportError as e:
     print(f"✗ Failed to import: {e}")
     exit(1)
 
-# Test 2: Verify no cryptography library dependency
 print("\n[Test 2] Checking for external crypto dependencies...")
 import sys
 if 'cryptography' in sys.modules:
@@ -24,7 +22,6 @@ if 'cryptography' in sys.modules:
 else:
     print("✓ No external cryptography library detected")
 
-# Test 3: Initialize storage
 print("\n[Test 3] Initializing Secure Storage...")
 try:
     storage = SecureStorage()
@@ -33,7 +30,6 @@ except Exception as e:
     print(f"✗ Storage initialization failed: {e}")
     exit(1)
 
-# Test 4: Check security methods
 print("\n[Test 4] Verifying Security Implementation...")
 info = storage.get_storage_info()
 print(f"  Encryption Method: {info.get('encryption_method', 'Unknown')}")
@@ -50,7 +46,6 @@ if 'HMAC' in info.get('integrity_method', ''):
 else:
     print("✗ Not using Lab 06 concepts")
 
-# Test 5: Test encryption/decryption
 print("\n[Test 5] Testing Encryption/Decryption...")
 test_data = {
     'username': 'testuser',
@@ -59,7 +54,6 @@ test_data = {
 }
 
 try:
-    # Save data
     success, msg = storage.save_users(test_data)
     if success:
         print(f"✓ Data saved: {msg}")
@@ -67,7 +61,6 @@ try:
         print(f"✗ Save failed: {msg}")
         exit(1)
     
-    # Load data
     loaded_data = storage.load_users()
     if loaded_data == test_data:
         print("✓ Data loaded and matches original")
@@ -81,7 +74,6 @@ except Exception as e:
     print(f"✗ Encryption/Decryption test failed: {e}")
     exit(1)
 
-# Test 6: Test integrity verification
 print("\n[Test 6] Testing Integrity Verification (HMAC)...")
 try:
     valid, msg = storage.verify_file_integrity('users')
@@ -93,12 +85,10 @@ try:
 except Exception as e:
     print(f"✗ Integrity verification failed: {e}")
 
-# Test 7: Verify lab concepts in security_utils
 print("\n[Test 7] Testing Security Utilities...")
 try:
     from src.core.security_utils import SecureDataValidator, SecureRandomGenerator
     
-    # Test HMAC signature (Lab 06)
     data = "Test message"
     key = "secret_key"
     signature = SecureDataValidator.create_data_signature(data, key)
@@ -109,7 +99,6 @@ try:
     else:
         print("✗ HMAC verification failed")
     
-    # Test prime generation (Lab 09)
     prime = SecureRandomGenerator.generate_secure_prime(8)
     from src.core.crypto_math import is_prime
     if is_prime(prime):
@@ -120,7 +109,6 @@ try:
 except Exception as e:
     print(f"✗ Security utilities test failed: {e}")
 
-# Test 8: Verify XOR cipher
 print("\n[Test 8] Testing XOR Stream Cipher (Lab 05)...")
 try:
     from src.core.modern_ciphers import XORStreamCipher
@@ -142,7 +130,6 @@ try:
 except Exception as e:
     print(f"✗ XOR cipher test failed: {e}")
 
-# Test 9: Verify hashing
 print("\n[Test 9] Testing SHA-256 Hashing (Lab 06)...")
 try:
     from src.core.hashing import MessageIntegrity
@@ -158,7 +145,6 @@ try:
     else:
         print("✗ Hashing inconsistent")
         
-    # Test HMAC
     hmac_sig = MessageIntegrity.compute_hmac(message, "secret")
     print(f"✓ HMAC generation working")
     print(f"  HMAC: {hmac_sig[:32]}...")
@@ -166,7 +152,6 @@ try:
 except Exception as e:
     print(f"✗ Hashing test failed: {e}")
 
-# Summary
 print("\n" + "=" * 60)
 print("TEST SUMMARY")
 print("=" * 60)

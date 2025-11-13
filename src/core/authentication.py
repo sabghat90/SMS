@@ -12,19 +12,13 @@ class UserAuthentication:
     """Manages user registration and authentication"""
     
     def __init__(self, storage=None):
-        # Dictionary to store user credentials
-        # Format: {username: {'password': hash, 'created_at': timestamp, 'email': email}}
         self.users = {}
-        # Dictionary to store active sessions (alias for compatibility)
         self.active_sessions = {}
         self.sessions = self.active_sessions  # Alias for test compatibility
-        # Secure storage instance
         self.storage = storage
         
-        # Load existing users from storage if available
         if self.storage:
             loaded_users = self.storage.load_users()
-            # Convert password_hash to password for test compatibility
             for username, user_data in loaded_users.items():
                 if 'password_hash' in user_data:
                     user_data['password'] = user_data.pop('password_hash')
@@ -37,7 +31,6 @@ class UserAuthentication:
     def _save_users(self):
         """Save users to storage if available"""
         if self.storage:
-            # Convert password to password_hash for storage
             storage_users = {}
             for username, user_data in self.users.items():
                 storage_data = user_data.copy()
@@ -52,7 +45,6 @@ class UserAuthentication:
         Returns: (success: bool, message: str) when called directly
         Returns: bool when used in tests (for compatibility)
         """
-        # Validation checks (conditionals)
         if not username or not password:
             return False  # Return just boolean for test compatibility
         
@@ -62,7 +54,6 @@ class UserAuthentication:
         if len(password) < 4:  # Reduced to 4 for test compatibility
             return False  # Return just boolean for test compatibility
         
-        # Store user credentials in dictionary (using 'password' key for test compatibility)
         self.users[username] = {
             'password': self._hash_password(password),
             'created_at': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -70,7 +61,6 @@ class UserAuthentication:
             'login_count': 0
         }
         
-        # Save to persistent storage
         self._save_users()
         
         return True  # Return just boolean for test compatibility
@@ -84,32 +74,26 @@ class UserAuthentication:
         Authenticate user login
         Returns: bool for test compatibility
         """
-        # Check if user exists (conditional)
         if username not in self.users:
             return False
         
-        # Verify password
         password_hash = self._hash_password(password)
         if self.users[username]['password'] != password_hash:
             return False
         
-        # Create active session
         session_id = hashlib.sha256(f"{username}{datetime.now()}".encode()).hexdigest()[:16]
         self.active_sessions[session_id] = {
             'username': username,
             'login_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
-        # Also store username as key for test compatibility
         self.active_sessions[username] = {
             'username': username,
             'login_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
-        # Update login count
         self.users[username]['login_count'] += 1
         
-        # Save to persistent storage
         self._save_users()
         
         return True
@@ -119,13 +103,11 @@ class UserAuthentication:
         Logout user and end session
         Accepts either session_id or username for compatibility
         """
-        # Check if it's a session_id
         if session_id_or_username in self.active_sessions:
             username = self.active_sessions[session_id_or_username]['username']
             del self.active_sessions[session_id_or_username]
             return True, f"User '{username}' logged out successfully"
         
-        # Check if it's a username
         for session_id, session_data in list(self.active_sessions.items()):
             if session_data['username'] == session_id_or_username:
                 del self.active_sessions[session_id]
@@ -161,7 +143,6 @@ class UserAuthentication:
         if username not in self.users:
             return False, "User not found"
         
-        # Verify old password
         old_hash = self._hash_password(old_password)
         if self.users[username]['password_hash'] != old_hash:
             return False, "Incorrect old password"
@@ -169,10 +150,8 @@ class UserAuthentication:
         if len(new_password) < 6:
             return False, "New password must be at least 6 characters long"
         
-        # Update password
         self.users[username]['password_hash'] = self._hash_password(new_password)
         
-        # Save to persistent storage
         self._save_users()
         
         return True, "Password changed successfully"

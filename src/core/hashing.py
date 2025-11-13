@@ -79,7 +79,6 @@ class MessageIntegrity:
         
         try:
             with open(filepath, 'rb') as f:
-                # Read file in chunks to handle large files
                 for chunk in iter(lambda: f.read(4096), b''):
                     hash_obj.update(chunk)
             return hash_obj.hexdigest()

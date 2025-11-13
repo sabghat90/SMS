@@ -49,9 +49,7 @@ class TestBlock(unittest.TestCase):
         
         block.mine_block(difficulty)
         
-        # Check hash has required leading zeros
         self.assertTrue(block.hash.startswith("0" * difficulty))
-        # Check nonce was incremented
         self.assertGreater(block.nonce, 0)
 
 
@@ -80,11 +78,9 @@ class TestMessageBlockchain(unittest.TestCase):
     
     def test_chain_validity(self):
         """Test blockchain validation"""
-        # Add some blocks
         self.blockchain.add_block({"message": "Block 1"})
         self.blockchain.add_block({"message": "Block 2"})
         
-        # Chain should be valid
         self.assertTrue(self.blockchain.is_chain_valid())
     
     def test_chain_linking(self):
@@ -92,7 +88,6 @@ class TestMessageBlockchain(unittest.TestCase):
         self.blockchain.add_block({"message": "Block 1"})
         self.blockchain.add_block({"message": "Block 2"})
         
-        # Each block's previous_hash should match previous block's hash
         for i in range(1, len(self.blockchain.chain)):
             current_block = self.blockchain.chain[i]
             previous_block = self.blockchain.chain[i - 1]
@@ -112,7 +107,6 @@ class TestMessageBlockchain(unittest.TestCase):
         self.blockchain.add_block({"message": "Test"})
         latest_block = self.blockchain.get_latest_block()
         
-        # Check hash has required leading zeros
         self.assertTrue(latest_block.hash.startswith("0" * self.blockchain.difficulty))
     
     def test_tampered_chain_invalid(self):
@@ -120,10 +114,8 @@ class TestMessageBlockchain(unittest.TestCase):
         self.blockchain.add_block({"message": "Block 1"})
         self.blockchain.add_block({"message": "Block 2"})
         
-        # Tamper with a block
         self.blockchain.chain[1].data = {"message": "Tampered"}
         
-        # Chain should now be invalid
         self.assertFalse(self.blockchain.is_chain_valid())
     
     def test_multiple_blocks(self):
@@ -131,7 +123,5 @@ class TestMessageBlockchain(unittest.TestCase):
         for i in range(5):
             self.blockchain.add_block({"message": f"Block {i}"})
         
-        # Should have genesis + 5 blocks
         self.assertEqual(len(self.blockchain.chain), 6)
-        # Verify chain integrity
         self.assertTrue(self.blockchain.is_chain_valid())

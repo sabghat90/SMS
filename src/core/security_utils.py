@@ -103,10 +103,8 @@ class SecurePasswordManager:
             Tuple of (hash, salt)
         """
         if salt is None:
-            # Generate random salt using os.urandom (simpler than secrets)
             salt = os.urandom(16).hex()
         
-        # Lab 06: Use SHA-256 hashing
         salted_password = password + salt
         password_hash = MessageIntegrity.compute_hash(salted_password)
         
@@ -162,7 +160,6 @@ class SecureDataValidator:
         try:
             with open(filepath, 'rb') as f:
                 file_data = f.read()
-            # Lab 06: Use SHA-256
             return MessageIntegrity.compute_hash(file_data.decode('utf-8', errors='ignore'))
         except Exception as e:
             return None
@@ -208,12 +205,9 @@ class SecureSessionManager:
         Returns:
             Tuple of (success, session_id_or_message)
         """
-        # Generate session ID using Lab 06 concepts (hash-based)
-        # Use os.urandom for randomness + SHA-256 for hashing
         random_data = os.urandom(32).hex()
         session_id = MessageIntegrity.compute_hash(username + random_data)
         
-        # Store session metadata
         self.session_data[session_id] = {
             'username': username,
             'created_at': MessageIntegrity.compute_hash(os.urandom(16).hex()),
@@ -236,10 +230,6 @@ class SecureSessionManager:
         if session_id not in self.session_data:
             return False
         
-        # Additional validation could include:
-        # - Session timeout
-        # - IP address verification
-        # - User agent verification
         
         return self.auth.is_session_active(session_id)
     
@@ -276,13 +266,11 @@ class SecureStorageHelper:
         Returns:
             Tuple of (success, message, verification_hash)
         """
-        # Create backup
         success, msg = storage.backup_data()
         
         if not success:
             return False, msg, None
         
-        # Compute verification hash
         import os
         backup_files = []
         data_dir = storage.data_dir
@@ -310,7 +298,6 @@ class SecureStorageHelper:
         Returns:
             Tuple of (success, message)
         """
-        # Clear blockchain temporary storage
         success, msg = storage.clear_blockchain_temp()
         
         return success, msg
@@ -337,21 +324,18 @@ class SecureStorageHelper:
             'keys_integrity': 'Not checked'
         }
         
-        # Try to decrypt users
         try:
             users = storage.load_users()
             checks['can_decrypt_users'] = isinstance(users, dict)
         except:
             pass
         
-        # Try to decrypt keys
         try:
             keys = storage.load_user_keys()
             checks['can_decrypt_keys'] = isinstance(keys, dict)
         except:
             pass
         
-        # Lab 06: Verify integrity if files exist
         if checks['users_file_exists']:
             valid, msg = storage.verify_file_integrity('users')
             checks['users_integrity'] = msg
@@ -414,11 +398,9 @@ class SecureRandomGenerator:
         return os.urandom(length)
 
 
-# Demo usage
 if __name__ == "__main__":
     print("=== Security Utilities Demo ===\n")
     
-    # Password Management
     print("1. Password Management:")
     strong_pass = SecurePasswordManager.generate_strong_password(16)
     print(f"   Generated password: {strong_pass}")
@@ -430,7 +412,6 @@ if __name__ == "__main__":
     print(f"   Hashed password: {password_hash[:32]}...")
     print(f"   Salt: {salt[:16]}...\n")
     
-    # Data Validation
     print("2. Data Validation:")
     data = "Important message"
     secret = "secret_key"
@@ -441,7 +422,6 @@ if __name__ == "__main__":
     is_valid = SecureDataValidator.verify_data_signature(data, secret, signature)
     print(f"   Signature valid: {is_valid}\n")
     
-    # Random Generation
     print("3. Secure Random Generation:")
     token = SecureRandomGenerator.generate_secure_token(16)
     print(f"   Secure token: {token}")

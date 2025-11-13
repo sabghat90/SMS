@@ -29,7 +29,6 @@ class TestXORStreamCipher(unittest.TestCase):
         """Test generated key has correct length"""
         cipher = XORStreamCipher()
         key = cipher.generate_key(16)
-        # Key is hex encoded, so 16 bytes = 32 hex chars
         self.assertEqual(len(key), 32)
     
     def test_different_keys_different_output(self):
@@ -55,7 +54,6 @@ class TestXORStreamCipher(unittest.TestCase):
         double_encrypted = cipher.encrypt(encrypted, key)
         
         # XOR twice should return original (approximately, due to encoding)
-        # At minimum, decrypt should work
         decrypted = cipher.decrypt(encrypted, key)
         self.assertEqual(decrypted, plaintext)
     
@@ -90,9 +88,7 @@ class TestMiniBlockCipher(unittest.TestCase):
         cipher = MiniBlockCipher()
         key = cipher.generate_key()
         
-        # Should be hex string
         self.assertTrue(all(c in '0123456789abcdef' for c in key.lower()))
-        # Should be 32 chars (16 bytes in hex)
         self.assertEqual(len(key), 32)
     
     def test_padding(self):
@@ -100,7 +96,6 @@ class TestMiniBlockCipher(unittest.TestCase):
         cipher = MiniBlockCipher()
         key = cipher.generate_key()
         
-        # Test messages of different lengths
         for length in [1, 7, 8, 9, 15, 16, 17, 100]:
             plaintext = "A" * length
             encrypted = cipher.encrypt(plaintext, key)

@@ -54,13 +54,11 @@ def is_prime(n, k=5):
     if n % 2 == 0:
         return False
     
-    # Write n-1 as 2^r * d
     r, d = 0, n - 1
     while d % 2 == 0:
         r += 1
         d //= 2
     
-    # Witness loop
     for _ in range(k):
         a = random.randrange(2, n - 1)
         x = pow(a, d, n)
@@ -82,9 +80,7 @@ def generate_prime(bits=16):
     """Generate a random prime number with specified bit length"""
     while True:
         candidate = random.getrandbits(bits)
-        # Make sure it's odd
         candidate |= 1
-        # Make sure it has the right bit length
         candidate |= (1 << (bits - 1))
         
         if is_prime(candidate):
@@ -116,7 +112,6 @@ def find_primitive_root(p):
     if p == 2:
         return 1
     
-    # Find prime factors of p-1
     phi = p - 1
     prime_factors = set()
     n = phi
@@ -128,7 +123,6 @@ def find_primitive_root(p):
     if n > 1:
         prime_factors.add(n)
     
-    # Test potential generators
     for g in range(2, p):
         is_generator = True
         for factor in prime_factors:

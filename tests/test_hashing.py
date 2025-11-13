@@ -75,7 +75,6 @@ class TestMessageIntegrity(unittest.TestCase):
         message = "Test"
         hash_value = self.integrity.hash_message(message)
         
-        # SHA-256 produces 32 bytes = 64 hex characters
         self.assertEqual(len(hash_value), 64)
     
     def test_hash_hex_format(self):
@@ -83,7 +82,6 @@ class TestMessageIntegrity(unittest.TestCase):
         message = "Test"
         hash_value = self.integrity.hash_message(message)
         
-        # Should only contain hex characters
         self.assertTrue(all(c in '0123456789abcdef' for c in hash_value.lower()))
     
     def test_empty_message(self):
@@ -99,7 +97,6 @@ class TestMessageIntegrity(unittest.TestCase):
         message = "A" * 10000
         hash_value = self.integrity.hash_message(message)
         
-        # Hash should still be 64 chars regardless of input length
         self.assertEqual(len(hash_value), 64)
     
     def test_case_sensitivity(self):
