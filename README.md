@@ -82,28 +82,11 @@ python client.py
 ```
 **Features**: Classical & modern ciphers, blockchain, basic encryption
 
-#### 4. Standalone Mode (Single User)
-```bash
-python main.py
-```
-
-#### 5. Run Tests
-```bash
-# Test all labs 12-15
-python tests/test_lab12.py
-python tests/test_lab13.py
-python tests/test_lab14.py
-python tests/test_lab15.py
-
-# Run all tests
-python tests/run_tests.py
-```
-
 ---
 
 ## Lab Concepts Implementation
 
-This project demonstrates **all 11 labs** in action:
+This project demonstrates **all 15 labs** in action:
 
 | Lab | Concept | Module | Real Application |
 |-----|---------|--------|------------------|
@@ -114,12 +97,14 @@ This project demonstrates **all 11 labs** in action:
 | **05** | Modern Ciphers | `modern_ciphers.py` | **XOR Stream Cipher** for data encryption |
 | **06** | Hashing & HMAC | `hashing.py` | **SHA-256 + HMAC** for integrity |
 | **07** | Blockchain | `blockchain.py` | Message ledger with PoW |
+| **08** | Crypto Math | `crypto_math.py` | Prime generation, modular arithmetic |
 | **09** | ElGamal | `elgamal.py` | Public key cryptography |
+| **10** | Digital Signatures | `elgamal.py` | Message authentication |
 | **11** | Key Distribution | `elgamal.py` | KDC implementation |
-| **12** | Key Exchange | `lab12_key_exchange.py` | **Diffie-Hellman** for session keys |
-| **13** | AEAD | `lab13_aead.py` | **Authenticated Encryption** (confidentiality + integrity) |
-| **14** | Key Management | `lab14_km.py` | Key rotation, revocation, lifecycle |
-| **15** | Post-Quantum/Forward Secrecy | `lab15_postquantum.py` | Ephemeral keys, quantum-resistant crypto |
+| **12** | Key Exchange | `key_exchange.py` | **Diffie-Hellman** for session keys |
+| **13** | AEAD | `aead.py` | **Authenticated Encryption** (confidentiality + integrity) |
+| **14** | Key Management | `km.py` | Key rotation, revocation, lifecycle |
+| **15** | Post-Quantum/Forward Secrecy | `postquantum.py` | Ephemeral keys, quantum-resistant crypto |
 
 **Detailed mapping**: [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 
@@ -192,7 +177,6 @@ Send Message ──► Choose Cipher ──► Encrypt ──► Hash (SHA-256)
 
 ```
 SMS/
-├── main.py                        # Standalone application entry point
 ├── server.py                      # Network server (easy access)
 ├── client.py                      # Network client (easy access)
 ├── requirements.txt               # Dependencies (NONE - only standard lib!)
@@ -205,53 +189,42 @@ SMS/
 │   │   ├── classical_ciphers.py   # Caesar, Vigenère (Lab 03-04)
 │   │   ├── modern_ciphers.py      # XOR, Block Cipher (Lab 05)
 │   │   ├── hashing.py             # SHA-256, HMAC (Lab 06)
-│   │   ├── elgamal.py             # ElGamal, KDC (Lab 09, 11)
-│   │   ├── crypto_math.py         # Math primitives (primes, modular)
+│   │   ├── crypto_math.py         # Math primitives (Lab 08)
+│   │   ├── elgamal.py             # ElGamal, KDC (Lab 09-11)
+│   │   ├── key_exchange.py        # Diffie-Hellman (Lab 12)
+│   │   ├── aead.py                # Authenticated Encryption (Lab 13)
+│   │   ├── km.py                  # Key Management (Lab 14)
+│   │   ├── postquantum.py         # Post-Quantum Crypto (Lab 15)
 │   │   ├── storage.py             # Encrypted storage (Lab 05+06)
-│   │   └── security_utils.py      # Security helpers (Lab concepts)
+│   │   └── security_utils.py      # Security helpers
 │   │
 │   └── network/                   # Network modules
 │       ├── server.py              # Multi-user TCP server
 │       └── client.py              # Network client
 │
-├── scripts/                       # Launcher scripts (legacy)
-│   ├── run_server.py              # Start network server
-│   ├── run_client.py              # Start network client
-│   └── run_standalone.py          # Start standalone mode
-│
-├── tests/                         # Unit tests
-│   ├── test_authentication.py     # Auth tests
-│   ├── test_blockchain.py         # Blockchain tests
-│   ├── test_classical_ciphers.py  # Classical cipher tests
-│   ├── test_crypto_math.py        # Crypto math tests
-│   ├── test_hashing.py            # Hashing tests
-│   ├── test_modern_ciphers.py     # Modern cipher tests
-│   ├── test_lab_concepts.py       # Lab concepts verification
-│   ├── run_tests.py               # Test runner
-│   └── README.md                  # Testing guide
-│
-├── examples/                      # Example & demo scripts
-│   ├── demo_storage.py            # Storage demonstration
-│   ├── test_storage.py            # Storage integration tests
-│   └── verify_fix.py              # System verification
-│
 ├── docs/                          # Documentation
 │   ├── INDEX.md                   # Documentation hub
 │   ├── LAB_CONCEPTS_IMPLEMENTATION.md  # Lab concepts summary
-│   ├── REORGANIZATION_SUMMARY.md  # Project reorganization notes
 │   │
 │   ├── guides/                    # User guides
+│   │   ├── LAB01-LAB04.md         # Python basics & classical ciphers
+│   │   ├── LAB05.md               # Modern ciphers
+│   │   ├── LAB06.md               # Hashing & HMAC
+│   │   ├── LAB07.md               # Blockchain
+│   │   ├── LAB08-LAB11.md         # Crypto math & ElGamal
+│   │   ├── LAB12.md               # Diffie-Hellman
+│   │   ├── LAB13.md               # AEAD
+│   │   ├── LAB14.md               # Key Management
+│   │   ├── LAB15.md               # Post-Quantum & Forward Secrecy
 │   │   ├── QUICKSTART.md          # 5-minute setup
 │   │   ├── NETWORK_GUIDE.md       # Multi-user guide
-│   │   ├── STORAGE_LAB_CONCEPTS.md # Storage security details
-│   │   ├── STORAGE_IMPLEMENTATION.md # Storage implementation
+│   │   ├── STORAGE.md             # Storage security details
 │   │   ├── DEMO_GUIDE.md          # Presentation guide
-│   │   └── DATA_DIRECTORY_FIX.md  # Troubleshooting
+│   │   └── SECURE_COMMUNICATION.md # Secure protocol guide
 │   │
 │   └── api/                       # API reference
 │       ├── ARCHITECTURE.md        # System architecture
-│       ├── LAB_MAPPING.md         # Lab concepts mapping
-│       └── TESTING.md             # Testing guide
+│       └── LAB_MAPPING.md         # Lab concepts mapping
 │
 └── data/                          # Auto-created data directory
     ├── users.json.enc             # Encrypted user data (XOR + HMAC)
@@ -391,17 +364,23 @@ python tests/test_lab_concepts.py
 ### Quick Links
 - [Quick Start Guide](docs/guides/QUICKSTART.md)
 - [Network Setup](docs/guides/NETWORK_GUIDE.md)
-- [Storage Security](docs/guides/STORAGE_LAB_CONCEPTS.md)
+- [Storage Security](docs/guides/STORAGE.md)
 - [Lab Mapping](docs/api/LAB_MAPPING.md)
 - [Architecture](docs/api/ARCHITECTURE.md)
 - [Documentation Hub](docs/INDEX.md)
 
 ### Key Documents
 - **For Students**: Start with [QUICKSTART.md](docs/guides/QUICKSTART.md)
-- **For Security Details**: Read [STORAGE_LAB_CONCEPTS.md](docs/guides/STORAGE_LAB_CONCEPTS.md)
+- **For Security Details**: Read [STORAGE.md](docs/guides/STORAGE.md)
 - **For Lab Concepts**: See [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 - **For Implementation**: Check [LAB_CONCEPTS_IMPLEMENTATION.md](docs/LAB_CONCEPTS_IMPLEMENTATION.md)
-- **For Advanced Labs**:
+- **For Secure Communication**: Read [SECURE_COMMUNICATION.md](docs/guides/SECURE_COMMUNICATION.md)
+- **For Individual Labs**: See comprehensive guides:
+  - [LAB01-LAB04.md](docs/guides/LAB01-LAB04.md) - Python basics & classical ciphers
+  - [LAB05.md](docs/guides/LAB05.md) - Modern ciphers
+  - [LAB06.md](docs/guides/LAB06.md) - Hashing & HMAC
+  - [LAB07.md](docs/guides/LAB07.md) - Blockchain
+  - [LAB08-LAB11.md](docs/guides/LAB08-LAB11.md) - Crypto math & ElGamal
   - [LAB12.md](docs/guides/LAB12.md) - Diffie-Hellman Key Exchange
   - [LAB13.md](docs/guides/LAB13.md) - AEAD (Authenticated Encryption)
   - [LAB14.md](docs/guides/LAB14.md) - Key Management
@@ -500,7 +479,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Dedicated to**: BCS4A & BCS4B Students, COMSATS University Islamabad (CUI)
 
-This project is created as an educational resource for Computer Science students, demonstrating practical implementations of cryptographic concepts covered in Labs 01-11.
+This project is created as an educational resource for Computer Science students, demonstrating practical implementations of cryptographic concepts covered in Labs 01-15.
 
 ---
 
@@ -521,30 +500,9 @@ This project is created as an educational resource for Computer Science students
 git clone https://github.com/sabghat90/SMS.git
 cd SMS
 
-# Run standalone
-python main.py
-
 # Run server + client (NEW - SIMPLIFIED!)
 python server.py    # Terminal 1
 python client.py    # Terminal 2
-
-# Test lab concepts
-python tests/test_lab_concepts.py
-
-# Test Labs 12-15
-python tests/test_lab12.py
-python tests/test_lab13.py
-python tests/test_lab14.py
-python tests/test_lab15.py
-
-# Run all tests
-python tests/run_tests.py
-
-# Run lab demos
-python examples/demo_lab12.py  # Diffie-Hellman
-python examples/demo_lab13.py  # AEAD
-python examples/demo_lab14.py  # Key Management
-python examples/demo_lab15.py  # Post-Quantum & Forward Secrecy
 ```
 
 ### Features at a Glance
