@@ -1,13 +1,12 @@
 """
 Classical Ciphers Module
-Lab 03 & Lab 04 Concepts: Caesar Cipher and Vigenère Cipher
+Caesar Cipher and Vigenère Cipher
 """
 
 
 class CaesarCipher:
     """
     Caesar Cipher: Shifts each letter by a fixed number of positions
-    Lab 03 Concept
     """
     
     def __init__(self, shift=3):
@@ -40,7 +39,6 @@ class CaesarCipher:
 class VigenereCipher:
     """
     Vigenère Cipher: Polyalphabetic substitution using a keyword
-    Lab 04 Concept
     """
     
     def __init__(self, key):

@@ -3,8 +3,8 @@ Secure Storage Module - Using Lab Concepts Only
 Handles persistent storage of user data and temporary blockchain storage
 
 Security Implementation:
-- Lab 05: XOR Stream Cipher for encryption/decryption
-- Lab 06: SHA-256 for key derivation and HMAC for integrity verification
+- XOR Stream Cipher for encryption/decryption
+- SHA-256 for key derivation and HMAC for integrity verification
 """
 
 import json
@@ -18,7 +18,7 @@ from .hashing import MessageIntegrity
 class SecureStorage:
     """
     Manages secure file-based storage for application data
-    Uses Lab 05 (XOR Stream Cipher) and Lab 06 (SHA-256, HMAC) concepts
+    Uses XOR Stream Cipher and SHA-256/HMAC concepts
     """
     
     def __init__(self, data_dir="data", master_password="SecureMessagingSystem2025"):
@@ -27,7 +27,7 @@ class SecureStorage:
         
         Args:
             data_dir: Directory to store data files
-            master_password: Master password for key derivation (Lab 06 concept)
+            master_password: Master password for key derivation
         """
         self.data_dir = data_dir
         self.users_file = os.path.join(data_dir, "users.json.enc")
@@ -43,7 +43,7 @@ class SecureStorage:
     
     def _derive_key(self, password):
         """
-        Derive encryption key from password using SHA-256 (Lab 06 concept)
+        Derive encryption key from password using SHA-256
         
         Args:
             password: Master password
@@ -56,7 +56,7 @@ class SecureStorage:
     
     def _encrypt_data(self, data):
         """
-        Encrypt data using XOR Stream Cipher (Lab 05 concept)
+        Encrypt data using XOR Stream Cipher
         
         Args:
             data: Dictionary to encrypt
@@ -77,7 +77,7 @@ class SecureStorage:
     
     def _decrypt_data(self, encrypted_hex, expected_hmac=None):
         """
-        Decrypt data and verify integrity (Lab 05 + Lab 06 concepts)
+        Decrypt data and verify integrity
         
         Args:
             encrypted_hex: Encrypted data in hex format
@@ -107,7 +107,7 @@ class SecureStorage:
     
     def save_users(self, users_dict):
         """
-        Save user data securely (Lab 05: XOR encrypted, Lab 06: HMAC protected)
+        Save user data securely (XOR encrypted, HMAC protected)
         
         Args:
             users_dict: Dictionary of user data
@@ -137,7 +137,7 @@ class SecureStorage:
     
     def load_users(self):
         """
-        Load user data from encrypted file (Lab 05 + Lab 06 verification)
+        Load user data from encrypted file
         
         Returns:
             Dictionary of user data or empty dict if file doesn't exist
@@ -166,7 +166,7 @@ class SecureStorage:
     
     def save_user_keys(self, keys_dict):
         """
-        Save ElGamal keys securely (Lab 05: XOR encrypted, Lab 06: HMAC protected)
+        Save ElGamal keys securely (XOR encrypted, HMAC protected)
         
         Args:
             keys_dict: Dictionary mapping username to key information
@@ -208,7 +208,7 @@ class SecureStorage:
     
     def load_user_keys(self):
         """
-        Load user keys from encrypted file (Lab 05 + Lab 06 verification)
+        Load user keys from encrypted file
         
         Returns:
             Dictionary of user keys or empty dict if file doesn't exist
@@ -237,7 +237,7 @@ class SecureStorage:
     
     def _save_integrity_hash(self, file_type, data):
         """
-        Save SHA-256 hash of data for integrity verification (Lab 06 concept)
+        Save SHA-256 hash of data for integrity verification
         
         Args:
             file_type: Type of file ('users' or 'keys')
@@ -264,7 +264,7 @@ class SecureStorage:
     
     def verify_file_integrity(self, file_type):
         """
-        Verify file integrity using stored SHA-256 hash (Lab 06 concept)
+        Verify file integrity using stored SHA-256 hash
         
         Args:
             file_type: Type of file to verify ('users' or 'keys')
@@ -331,7 +331,7 @@ class SecureStorage:
     
     def load_blockchain_temp(self):
         """
-        Load temporary blockchain data with integrity verification (Lab 06)
+        Load temporary blockchain data with integrity verification
         
         Returns:
             List of block data or None if file doesn't exist or verification fails
@@ -376,9 +376,9 @@ class SecureStorage:
             'users_file_exists': os.path.exists(self.users_file),
             'keys_file_exists': os.path.exists(self.keys_file),
             'blockchain_file_exists': os.path.exists(self.blockchain_file),
-            'encryption_method': 'XOR Stream Cipher (Lab 05)',
-            'integrity_method': 'HMAC-SHA256 (Lab 06)',
-            'key_derivation': 'SHA-256 (Lab 06)'
+            'encryption_method': 'XOR Stream Cipher',
+            'integrity_method': 'HMAC-SHA256',
+            'key_derivation': 'SHA-256'
         }
         
         if os.path.exists(self.users_file):
@@ -411,7 +411,7 @@ class SecureStorage:
             backup_manifest = {
                 'timestamp': timestamp,
                 'files': {},
-                'method': 'Lab concepts (XOR + HMAC)'
+                'method': 'XOR + HMAC'
             }
             
             if os.path.exists(self.users_file):

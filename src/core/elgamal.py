@@ -1,6 +1,6 @@
 """
 ElGamal Encryption Module
-Lab 09 & Lab 11 Concepts: ElGamal key generation and encryption
+ElGamal key generation and encryption
 """
 
 import random
@@ -126,7 +126,6 @@ class KeyDistributionCenter:
     """
     Key Distribution Center (KDC)
     Simulates a trusted third party for key exchange
-    Lab 11 Concept: Key Distribution
     """
     
     def __init__(self):

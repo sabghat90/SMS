@@ -1,6 +1,6 @@
 """
 User Authentication Module
-Lab 01 & Lab 02 Concepts: Python basics, collections (dictionaries), conditionals
+Python basics, collections (dictionaries), conditionals
 Handles user registration and login using secure credential storage
 """
 

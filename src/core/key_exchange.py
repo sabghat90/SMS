@@ -1,4 +1,4 @@
-"""Lab 12 - Key Exchange (Diffie-Hellman)
+"""Key Exchange (Diffie-Hellman)
 
 Demonstrates Diffie-Hellman key exchange for establishing shared secrets
 between two parties over an insecure channel. This is the foundation for
@@ -119,7 +119,7 @@ def demo() -> Tuple[int, int]:
     Returns:
         Tuple of (alice_shared_secret, bob_shared_secret) - should be equal
     """
-    print("Lab 12: Diffie-Hellman Key Exchange Demo")
+    print("Diffie-Hellman Key Exchange Demo")
     print("=" * 50)
     
     # Alice generates her keys
@@ -151,7 +151,3 @@ def demo() -> Tuple[int, int]:
     print(f"Session keys match: {alice_session_key == bob_session_key}")
     
     return alice_shared, bob_shared
-
-
-if __name__ == "__main__":
-    demo()

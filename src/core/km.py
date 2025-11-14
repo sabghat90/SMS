@@ -1,4 +1,4 @@
-"""Lab 14 - Key Management
+"""Key Management
 
 Demonstrates secure key lifecycle management including:
 - Key generation and storage
@@ -220,7 +220,7 @@ def demo() -> bool:
     Returns:
         True if all operations succeed
     """
-    print("Lab 14: Key Management Demo")
+    print("Key Management Demo")
     print("=" * 50)
     
     km = KeyManager()
@@ -274,7 +274,3 @@ def demo() -> bool:
     
     print("\nKey management operations complete!")
     return old_revoked and new_works
-
-
-if __name__ == "__main__":
-    demo()

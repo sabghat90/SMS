@@ -1,6 +1,6 @@
 """
 Hashing Module
-Lab 06 Concept: SHA-256 hashing for integrity verification
+SHA-256 hashing for integrity verification
 """
 
 import hashlib

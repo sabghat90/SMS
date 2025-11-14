@@ -2,7 +2,7 @@
 
 This implementation demonstrates **real-world secure communication** using all concepts from Labs 12-15 integrated into a client-server messaging system.
 
-## 🔐 Security Features
+## Security Features
 
 ### Lab 12: Diffie-Hellman Key Exchange
 - **What**: Secure key exchange without pre-shared secrets
@@ -28,7 +28,7 @@ This implementation demonstrates **real-world secure communication** using all c
 - **How**: Each session uses fresh DH keys
 - **Real-world**: TLS 1.3 (mandatory), Signal protocol
 
-## 📁 Files Overview
+## Files Overview
 
 ### Core Security Module
 - **`src/core/secure_protocol.py`**: Complete security protocol integrating all labs
@@ -50,7 +50,7 @@ This implementation demonstrates **real-world secure communication** using all c
 - **`examples/demo_lab14.py`**: Lab 14 standalone demo
 - **`examples/demo_lab15.py`**: Lab 15 standalone demo
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Run the Interactive Demo
 ```powershell
@@ -84,7 +84,7 @@ python secure_client.py
 5. **Key Rotation (Lab 14)**: Keys automatically rotate after many messages
 6. **Session Cleanup (Lab 15)**: Keys destroyed on disconnect (forward secrecy)
 
-## 📋 Usage Examples
+## Usage Examples
 
 ### Secure Messaging Workflow
 
@@ -141,7 +141,7 @@ Session ends:
   → Even if long-term credentials stolen!
 ```
 
-## 🔍 Security Protocol Flow
+## Security Protocol Flow
 
 ```
 CLIENT                                SERVER
@@ -179,7 +179,7 @@ CLIENT                                SERVER
   |                                    |
 ```
 
-## 🎓 Educational Value
+## Educational Value
 
 ### For Students
 - See how theoretical concepts work in practice
@@ -193,37 +193,7 @@ CLIENT                                SERVER
 3. **Key rotation**: Observe automatic key rotation
 4. **Forward secrecy**: Destroy keys → old messages unrecoverable
 
-## 🧪 Testing Security Features
-
-### Test 1: Verify Key Exchange
-```powershell
-python demo_secure_communication.py
-# Choose option 1 (Lab 12 demo)
-# Observe: Both parties derive same key without transmitting it
-```
-
-### Test 2: Verify Tampering Detection
-```powershell
-python demo_secure_communication.py
-# Choose option 2 (Lab 13 demo)
-# Observe: Modified ciphertext causes decryption failure
-```
-
-### Test 3: Verify Key Rotation
-```powershell
-python demo_secure_communication.py
-# Choose option 3 (Lab 14 demo)
-# Observe: Keys rotate after message threshold
-```
-
-### Test 4: Verify Forward Secrecy
-```powershell
-python demo_secure_communication.py
-# Choose option 4 (Lab 15 demo)
-# Observe: Keys destroyed → past messages secure
-```
-
-## 📊 Security Guarantees
+## Security Guarantees
 
 | Feature | Without Labs 12-15 | With Labs 12-15 |
 |---------|-------------------|-----------------|
@@ -234,7 +204,7 @@ python demo_secure_communication.py
 | Long Sessions | Single key vulnerable | Automatic key rotation |
 | Past Messages | Decryptable if key stolen | Secure (forward secrecy) |
 
-## 🔧 Configuration
+## Configuration
 
 ### Adjust Security Parameters
 
@@ -256,29 +226,29 @@ DEMO_P = 0xE95E4A5F737059DC60DFC7AD95B3D8139515620F  # 160-bit (demo)
 DEMO_G = 5
 ```
 
-## 🎯 Key Takeaways
+## Key Takeaways
 
 ### Lab 12 (DH Key Exchange)
-✅ Establishes shared secrets without pre-sharing
-✅ Foundation for all modern key exchange (TLS, SSH, VPN)
-✅ Security relies on discrete logarithm problem
+Establishes shared secrets without pre-sharing
+Foundation for all modern key exchange (TLS, SSH, VPN)
+Security relies on discrete logarithm problem
 
 ### Lab 13 (AEAD)
-✅ Combines encryption + authentication efficiently
-✅ Prevents tampering and forgery
-✅ Modern standard (TLS 1.3 requires AEAD)
+Combines encryption + authentication efficiently
+Prevents tampering and forgery
+Modern standard (TLS 1.3 requires AEAD)
 
 ### Lab 14 (Key Management)
-✅ Limits damage from key compromise
-✅ Required for compliance (PCI-DSS, HIPAA)
-✅ Best practice: rotate regularly
+Limits damage from key compromise
+Required for compliance (PCI-DSS, HIPAA)
+Best practice: rotate regularly
 
 ### Lab 15 (Forward Secrecy)
-✅ Protects past communications
-✅ Mandatory in TLS 1.3
-✅ Essential for high-security applications
+Protects past communications
+Mandatory in TLS 1.3
+Essential for high-security applications
 
-## 📚 Real-World Applications
+## Real-World Applications
 
 - **TLS 1.3**: Uses all these concepts for HTTPS
 - **Signal/WhatsApp**: Double ratchet algorithm (forward secrecy)
@@ -286,7 +256,7 @@ DEMO_G = 5
 - **SSH**: Key exchange + session encryption
 - **Enterprise Security**: KMS, credential rotation
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### "Session not established"
 - Make sure to connect() before other operations
@@ -301,14 +271,14 @@ DEMO_G = 5
 - Normal after first few messages
 - Server and client must both support rotation
 
-## 📖 Further Reading
+## Further Reading
 
 - `docs/guides/LAB12.md` - DH Key Exchange details
 - `docs/guides/LAB13.md` - AEAD concepts
 - `docs/guides/LAB14.md` - Key Management lifecycle
 - `docs/guides/LAB15.md` - Forward Secrecy & Post-Quantum
 
-## 🎬 Demo Videos
+## Demo Videos
 
 ### Complete Workflow Demo
 ```powershell
@@ -319,7 +289,3 @@ python demo_secure_communication.py
 This demonstrates all 4 labs in sequence with detailed explanations.
 
 ---
-
-**Created by**: Security & Cryptography Course
-**Purpose**: Educational demonstration of modern secure communication
-**Note**: This is for learning. Production systems should use established libraries (TLS, Signal Protocol, etc.)

@@ -1,6 +1,6 @@
 # Visual Guide: Labs 12-15 Security Concepts
 
-## 🎨 Visual Representations
+## Visual Representations
 
 ### 1. Diffie-Hellman Key Exchange (Lab 12)
 
@@ -46,7 +46,7 @@ ALICE                                                    BOB
   │ 10. Derive session key                               │
   │     session_key = SHA256(s)                          │
   │                                                       │
-  │         🔒 SECURE CHANNEL ESTABLISHED 🔒             │
+  │         SECURE CHANNEL ESTABLISHED                   │
   │                                                       │
 
 EVE (Eavesdropper) sees:
@@ -116,10 +116,10 @@ DECRYPTION FLOW:
      │Plaintext │  "Hello Bob, meet at 3 PM"
      └──────────┘
 
-🛡️ GUARANTEES:
-  ✓ Confidentiality (encryption)
-  ✓ Integrity (tag verification)
-  ✓ Authentication (only key holder can create valid tag)
+GUARANTEES:
+  Confidentiality (encryption)
+  Integrity (tag verification)
+  Authentication (only key holder can create valid tag)
 ```
 
 ### 3. Key Rotation (Lab 14)
@@ -168,10 +168,10 @@ t=3600s      SESSION END
              └─ FORWARD SECRECY ACHIEVED!
 
 WHY ROTATE?
-  ✓ Limit data encrypted with single key
-  ✓ Reduce cryptanalysis window
-  ✓ Comply with regulations (PCI-DSS: 90 days)
-  ✓ Limit damage from key compromise
+  Limit data encrypted with single key
+  Reduce cryptanalysis window
+  Comply with regulations (PCI-DSS: 90 days)
+  Limit damage from key compromise
 ```
 
 ### 4. Forward Secrecy (Lab 15)
@@ -201,7 +201,7 @@ DAY 7: Eve compromises Alice's system
 Eve's attack:
   1. Has recorded encrypted traffic
   2. Has Alice's private key
-  3. Decrypts ALL past messages ❌
+  3. Decrypts ALL past messages X
   └─> COMPLETE COMPROMISE!
 
 
@@ -235,13 +235,13 @@ Eve's attack:
   1. Has recorded encrypted traffic
   2. Has Alice's credentials
   3. Tries to decrypt past messages...
-     └─> FAILS! ✓
+     └─> FAILS!
          - Ephemeral keys destroyed
          - Session keys gone forever
          - Cannot recompute from long-term keys
   
   4. Can only decrypt NEW traffic (from Day 7 onward)
-     └─> Past messages remain SECURE! ✓
+     └─> Past messages remain SECURE!
 
 
 KEY INSIGHT:
@@ -277,7 +277,7 @@ Client                                              Server
   │ <──────────────────────────────────────────────────│
   │                                                    │
   │ Compute shared secret & derive session_key        │
-  │ ✓ Session established                             │
+  │ Session established                             │
   ▼                                                    ▼
   
 PHASE 2: SECURE MESSAGING (Lab 13)
@@ -320,7 +320,7 @@ PHASE 3: KEY ROTATION (Lab 14)
   │ <──────────────────────────────────────────────────│
   │                                                    │
   │ Compute NEW session_key                           │
-  │ ✓ Rotation complete, continue messaging           │
+  │ Rotation complete, continue messaging           │
   ▼                                                    ▼
   
 PHASE 4: SESSION CLEANUP (Lab 15)
@@ -334,7 +334,7 @@ PHASE 4: SESSION CLEANUP (Lab 15)
   │ ├─ session_key = b'\x00' * 32                     │
   │ └─ delete session object                          │
   │                                                    │
-  │ ✓ FORWARD SECRECY ACHIEVED!                       │
+  │ FORWARD SECRECY ACHIEVED!                       │
   │   Past messages cannot be decrypted               │
   ▼                                                    ▼
 
@@ -343,21 +343,21 @@ SECURITY GUARANTEES:
 ═══════════════════════════════════════════════════════════════
 
 ┌────────────────────┬──────────────────────────────────────────┐
-│ Confidentiality    │ ✓ Plaintext hidden (Lab 13 encryption)   │
+│ Confidentiality    │ Plaintext hidden (Lab 13 encryption)   │
 ├────────────────────┼──────────────────────────────────────────┤
-│ Integrity          │ ✓ Tampering detected (Lab 13 auth tag)   │
+│ Integrity          │ Tampering detected (Lab 13 auth tag)   │
 ├────────────────────┼──────────────────────────────────────────┤
-│ Authentication     │ ✓ Sender verified (Lab 13 HMAC)          │
+│ Authentication     │ Sender verified (Lab 13 HMAC)          │
 ├────────────────────┼──────────────────────────────────────────┤
-│ Forward Secrecy    │ ✓ Past secure (Lab 15 key destruction)   │
+│ Forward Secrecy    │ Past secure (Lab 15 key destruction)   │
 ├────────────────────┼──────────────────────────────────────────┤
-│ Key Freshness      │ ✓ Regular rotation (Lab 14)              │
+│ Key Freshness      │ Regular rotation (Lab 14)              │
 ├────────────────────┼──────────────────────────────────────────┤
-│ Secure Key Exchange│ ✓ No pre-shared secrets (Lab 12 DH)      │
+│ Secure Key Exchange│ No pre-shared secrets (Lab 12 DH)      │
 └────────────────────┴──────────────────────────────────────────┘
 ```
 
-## 📊 Comparison Chart
+## Comparison Chart
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -366,29 +366,29 @@ SECURITY GUARANTEES:
 
 Feature                  Original System    Secure System (Labs 12-15)
 ─────────────────────────────────────────────────────────────────────
-Key Exchange             ❌ Manual           ✅ Automatic DH (Lab 12)
-Session Key              ❌ None             ✅ Derived from DH
-Encryption               ⚠️  Caesar/Vigenère ✅ AEAD (Lab 13)
-Authentication           ⚠️  Separate HMAC   ✅ Built into AEAD
-Tampering Detection      ✅ SHA-256 hash     ✅ AEAD auth tag
-Key Rotation             ❌ No               ✅ Automatic (Lab 14)
-Forward Secrecy          ❌ No               ✅ Yes (Lab 15)
-Ephemeral Keys           ❌ No               ✅ Per-session (Lab 15)
-Message Counter          ❌ No               ✅ Replay protection
-Session Management       ⚠️  Basic           ✅ Full lifecycle
+Key Exchange             Manual             Automatic DH (Lab 12)
+Session Key              None               Derived from DH
+Encryption               Caesar/Vigenère    AEAD (Lab 13)
+Authentication           Separate HMAC      Built into AEAD
+Tampering Detection      SHA-256 hash       AEAD auth tag
+Key Rotation             No                 Automatic (Lab 14)
+Forward Secrecy          No                 Yes (Lab 15)
+Ephemeral Keys           No                 Per-session (Lab 15)
+Message Counter          No                 Replay protection
+Session Management       Basic              Full lifecycle
 
 THREAT PROTECTION:
 ─────────────────────────────────────────────────────────────────────
-Eavesdropping           ⚠️  Weak cipher      ✅ Strong encryption
-Man-in-the-Middle       ❌ Vulnerable        ✅ Protected (DH)
-Message Tampering       ✅ Detected          ✅ Detected (AEAD)
-Replay Attacks          ❌ Vulnerable        ✅ Protected (counter)
-Key Compromise (future) ❌ All exposed       ✅ Only current session
-Key Compromise (past)   ❌ All exposed       ✅ Past sessions safe
-Long-term Storage       ❌ Risky             ✅ Safe (forward secrecy)
+Eavesdropping           Weak cipher       Strong encryption
+Man-in-the-Middle       Vulnerable        Protected (DH)
+Message Tampering       Detected          Detected (AEAD)
+Replay Attacks          Vulnerable        Protected (counter)
+Key Compromise (future) All exposed       Only current session
+Key Compromise (past)   All exposed       Past sessions safe
+Long-term Storage       Risky             Safe (forward secrecy)
 ```
 
-## 🎯 Real-World Protocol Mapping
+## Real-World Protocol Mapping
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

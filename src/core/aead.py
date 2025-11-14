@@ -1,4 +1,4 @@
-"""Lab 13 - AEAD (Authenticated Encryption with Associated Data)
+"""AEAD (Authenticated Encryption with Associated Data)
 
 Demonstrates authenticated encryption combining confidentiality and integrity
 in a single operation. This module implements a simple AEAD construction using:
@@ -106,7 +106,7 @@ def demo() -> bool:
     Returns:
         True if demo passes all checks
     """
-    print("Lab 13: AEAD (Authenticated Encryption) Demo")
+    print("AEAD (Authenticated Encryption) Demo")
     print("=" * 50)
     
     # Setup
@@ -157,7 +157,3 @@ def demo() -> bool:
     
     print("\nAll AEAD checks passed!")
     return True
-
-
-if __name__ == "__main__":
-    demo()

@@ -1,6 +1,6 @@
 """
 Blockchain Module
-Lab 07 Concept: Blockchain for message logging with immutability and non-repudiation
+Blockchain for message logging with immutability and non-repudiation
 Each encrypted message is stored as a block in the blockchain
 """
 

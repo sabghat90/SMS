@@ -3,9 +3,9 @@ Security Utilities Module - Using Lab Concepts Only
 Additional security methods and helpers for the Secure Messaging System
 
 Security Implementation:
-- Lab 06: SHA-256 hashing and HMAC for all integrity checks
-- Lab 05: XOR Stream Cipher for encryption needs
-- Lab 09: Crypto math primitives (prime generation)
+- SHA-256 hashing and HMAC for integrity checks
+- XOR Stream Cipher for encryption needs
+- Crypto math primitives (prime generation)
 - NO external cryptography libraries except those in lab concepts
 """
 
@@ -93,7 +93,7 @@ class SecurePasswordManager:
     @staticmethod
     def hash_password_with_salt(password, salt=None):
         """
-        Hash password with salt using MessageIntegrity (Lab 06 concept)
+        Hash password with salt using MessageIntegrity
         
         Args:
             password: Password to hash
@@ -113,13 +113,13 @@ class SecurePasswordManager:
 
 class SecureDataValidator:
     """
-    Data validation using Lab 06 concepts (SHA-256 and HMAC)
+    Data validation using SHA-256 and HMAC
     """
     
     @staticmethod
     def create_data_signature(data, secret_key):
         """
-        Create HMAC signature for data using MessageIntegrity (Lab 06)
+        Create HMAC signature for data using MessageIntegrity
         
         Args:
             data: Data to sign
@@ -133,7 +133,7 @@ class SecureDataValidator:
     @staticmethod
     def verify_data_signature(data, secret_key, signature):
         """
-        Verify HMAC signature using MessageIntegrity (Lab 06)
+        Verify HMAC signature using MessageIntegrity
         
         Args:
             data: Original data
@@ -149,7 +149,7 @@ class SecureDataValidator:
     @staticmethod
     def compute_file_hash(filepath):
         """
-        Compute SHA-256 hash of file contents (Lab 06 concept)
+        Compute SHA-256 hash of file contents
         
         Args:
             filepath: Path to file
@@ -167,7 +167,7 @@ class SecureDataValidator:
     @staticmethod
     def verify_file_integrity(filepath, expected_hash):
         """
-        Verify file integrity against expected hash (Lab 06 concept)
+        Verify file integrity against expected hash
         
         Args:
             filepath: Path to file
@@ -182,7 +182,7 @@ class SecureDataValidator:
 
 class SecureSessionManager:
     """
-    Enhanced session management with Lab 06 security features
+    Enhanced session management with security features
     """
     
     def __init__(self, auth_system):
@@ -197,7 +197,7 @@ class SecureSessionManager:
     
     def create_secure_session(self, username):
         """
-        Create a secure session with Lab 06 hash-based session ID
+        Create a secure session with hash-based session ID
         
         Args:
             username: Username for session
@@ -355,7 +355,7 @@ class SecureStorageHelper:
 
 class SecureRandomGenerator:
     """
-    Secure random number generation using Lab 09 crypto_math concepts
+    Secure random number generation using crypto_math concepts
     """
     
     @staticmethod
@@ -374,7 +374,7 @@ class SecureRandomGenerator:
     @staticmethod
     def generate_secure_prime(bits=16):
         """
-        Generate cryptographically secure prime number (Lab 09 concept)
+        Generate cryptographically secure prime number
         
         Args:
             bits: Number of bits for prime
@@ -398,36 +398,3 @@ class SecureRandomGenerator:
         return os.urandom(length)
 
 
-if __name__ == "__main__":
-    print("=== Security Utilities Demo ===\n")
-    
-    print("1. Password Management:")
-    strong_pass = SecurePasswordManager.generate_strong_password(16)
-    print(f"   Generated password: {strong_pass}")
-    
-    strength, feedback = SecurePasswordManager.check_password_strength(strong_pass)
-    print(f"   Strength: {strength}")
-    
-    password_hash, salt = SecurePasswordManager.hash_password_with_salt("mypassword")
-    print(f"   Hashed password: {password_hash[:32]}...")
-    print(f"   Salt: {salt[:16]}...\n")
-    
-    print("2. Data Validation:")
-    data = "Important message"
-    secret = "secret_key"
-    signature = SecureDataValidator.create_data_signature(data, secret)
-    print(f"   Data: {data}")
-    print(f"   Signature: {signature[:32]}...")
-    
-    is_valid = SecureDataValidator.verify_data_signature(data, secret, signature)
-    print(f"   Signature valid: {is_valid}\n")
-    
-    print("3. Secure Random Generation:")
-    token = SecureRandomGenerator.generate_secure_token(16)
-    print(f"   Secure token: {token}")
-    
-    prime = SecureRandomGenerator.generate_secure_prime(8)
-    print(f"   Random prime: {prime}")
-    print(f"   Is prime: {is_prime(prime)}\n")
-    
-    print("All security utilities working!")

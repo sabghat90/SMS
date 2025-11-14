@@ -1,10 +1,6 @@
 """
 Secure Communication Protocol
-Integrates all Lab 12-15 concepts into a complete secure messaging protocol:
-- Lab 12: Diffie-Hellman key exchange for session establishment
-- Lab 13: AEAD for authenticated encryption
-- Lab 14: Key management with rotation and revocation
-- Lab 15: Forward secrecy with ephemeral keys
+Integrates key exchange, AEAD encryption, key management, and forward secrecy into a complete secure messaging protocol.
 """
 
 import json
@@ -30,10 +26,10 @@ class SecureSession:
     """
     Represents a secure communication session between client and server.
     Combines all security concepts:
-    - Ephemeral DH keys (Forward Secrecy - Lab 15)
-    - Session key derived from DH exchange (Lab 12)
-    - AEAD encryption for all messages (Lab 13)
-    - Key rotation support (Lab 14)
+    - Ephemeral DH keys (forward secrecy)
+    - Session key derived from key exchange
+    - AEAD encryption for all messages
+    - Key rotation support
     """
     
     def __init__(self, session_id: str, is_server: bool = False):
@@ -41,16 +37,16 @@ class SecureSession:
         self.is_server = is_server
         self.created_at = time.time()
         
-        # Lab 15: Ephemeral keys for forward secrecy
+        # Ephemeral keys for forward secrecy
         self.ephemeral_dh = EphemeralDH()
         
-        # Lab 12: Session key from key exchange
+        # Session key from key exchange
         self.session_key: Optional[bytes] = None
         
-        # Lab 13: Message counter for nonce generation (prevents replay)
+        # Message counter for nonce generation (prevents replay)
         self.message_counter = 0
         
-        # Lab 14: Track key rotation
+        # Track key rotation
         self.key_rotated_at: Optional[float] = None
         self.messages_encrypted = 0
         
@@ -64,15 +60,14 @@ class SecureSession:
     
     def complete_key_exchange(self, their_public_key: int) -> bytes:
         """
-        Complete DH key exchange and derive session key.
-        Lab 12 + Lab 15 concepts.
+        Complete Diffie-Hellman key exchange and derive session key.
         """
         self.session_key = self.ephemeral_dh.compute_session_key(their_public_key)
         return self.session_key
     
     def needs_rotation(self) -> bool:
         """
-        Determine if key rotation is needed (Lab 14 concept).
+        Determine if key rotation is needed.
         Rotate keys based on:
         - Number of messages encrypted
         - Session age
@@ -88,7 +83,7 @@ class SecureSession:
     
     def rotate_key(self) -> Tuple[int, int]:
         """
-        Perform key rotation (Lab 14 + Lab 15).
+        Perform key rotation.
         Generate new ephemeral keys and return them for re-exchange.
         """
         # Destroy old ephemeral keys (forward secrecy)
@@ -103,7 +98,7 @@ class SecureSession:
     
     def encrypt_message(self, plaintext: str, metadata: Optional[Dict] = None) -> Dict:
         """
-        Encrypt message using AEAD (Lab 13).
+        Encrypt message using AEAD.
         
         Returns:
             Dictionary with ciphertext, tag, nonce, and metadata
@@ -142,7 +137,7 @@ class SecureSession:
     
     def decrypt_message(self, encrypted_data: Dict) -> str:
         """
-        Decrypt and verify message using AEAD (Lab 13).
+        Decrypt and verify message using AEAD.
         
         Args:
             encrypted_data: Dictionary with ciphertext, tag, nonce, aad
@@ -171,7 +166,7 @@ class SecureSession:
     
     def destroy(self):
         """
-        Destroy session and keys (Lab 15: Forward Secrecy).
+        Destroy session and keys (forward secrecy).
         After this, past messages cannot be decrypted.
         """
         self.ephemeral_dh.destroy_keys()
@@ -184,17 +179,17 @@ class SecureSession:
 class SecureProtocol:
     """
     Complete secure communication protocol manager.
-    Integrates all Lab 12-15 concepts:
-    - Session establishment with DH key exchange (Lab 12)
-    - AEAD encrypted messages (Lab 13)
-    - Key lifecycle management (Lab 14)
-    - Forward secrecy with ephemeral keys (Lab 15)
+    Integrates:
+    - Session establishment with DH key exchange
+    - AEAD encrypted messages
+    - Key lifecycle management
+    - Forward secrecy with ephemeral keys
     """
     
     def __init__(self, is_server: bool = False):
         self.is_server = is_server
         
-        # Lab 14: Key manager for session keys
+        # Key manager for session keys
         self.key_manager = KeyManager()
         
         # Active sessions
@@ -203,7 +198,7 @@ class SecureProtocol:
     def create_session(self, session_id: Optional[str] = None) -> SecureSession:
         """
         Create a new secure session with ephemeral keys.
-        Lab 15: Each session gets fresh ephemeral keys (forward secrecy).
+        Each session gets fresh ephemeral keys (forward secrecy).
         """
         if session_id is None:
             session_id = f"session-{secrets.token_hex(8)}"
@@ -219,7 +214,7 @@ class SecureProtocol:
     def initiate_handshake(self, session_id: str) -> Dict:
         """
         Initiate secure handshake (client side).
-        Lab 12: Send public key for DH exchange.
+        Send public key for DH exchange.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
@@ -241,7 +236,7 @@ class SecureProtocol:
     def respond_to_handshake(self, handshake_init: Dict) -> Tuple[Dict, SecureSession]:
         """
         Respond to handshake (server side).
-        Lab 12: Complete DH key exchange.
+        Complete DH key exchange.
         """
         session_id = handshake_init['session_id']
         their_public_key = handshake_init['public_key']
@@ -267,7 +262,7 @@ class SecureProtocol:
     def complete_handshake(self, session_id: str, handshake_response: Dict):
         """
         Complete handshake (client side).
-        Lab 12: Derive shared session key.
+        Derive shared session key.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
@@ -284,15 +279,14 @@ class SecureProtocol:
     def send_secure_message(self, session_id: str, message: str, metadata: Optional[Dict] = None) -> Dict:
         """
         Encrypt and send message securely.
-        Lab 13: AEAD encryption with authentication.
-        Lab 14: Check if key rotation needed.
+        AEAD encryption with authentication and rotation checks.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
         
         session = self.sessions[session_id]
         
-        # Lab 14: Check if rotation needed
+        # Check if rotation needed
         if session.needs_rotation():
             print(f"[Security] Key rotation needed for session {session_id}")
             return {
@@ -301,7 +295,7 @@ class SecureProtocol:
                 'reason': 'Message limit or session age exceeded'
             }
         
-        # Lab 13: AEAD encryption
+        # AEAD encryption
         encrypted = session.encrypt_message(message, metadata)
         encrypted['type'] = 'SECURE_MESSAGE'
         encrypted['session_id'] = session_id
@@ -311,14 +305,14 @@ class SecureProtocol:
     def receive_secure_message(self, session_id: str, encrypted_data: Dict) -> str:
         """
         Receive and decrypt secure message.
-        Lab 13: AEAD decryption with authentication verification.
+        AEAD decryption with authentication verification.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
         
         session = self.sessions[session_id]
         
-        # Lab 13: AEAD decrypt
+        # AEAD decrypt
         plaintext = session.decrypt_message(encrypted_data)
         
         return plaintext
@@ -326,7 +320,7 @@ class SecureProtocol:
     def rotate_session_key(self, session_id: str) -> Dict:
         """
         Perform key rotation for a session.
-        Lab 14: Key rotation + Lab 15: New ephemeral keys.
+        Key rotation with new ephemeral keys.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
@@ -348,7 +342,7 @@ class SecureProtocol:
     def complete_key_rotation(self, session_id: str, rotation_data: Dict):
         """
         Complete key rotation (other party's response).
-        Lab 14 + Lab 15: Re-establish session key with new ephemeral keys.
+        Re-establish session key with new ephemeral keys.
         """
         if session_id not in self.sessions:
             raise ValueError(f"Session {session_id} not found")
@@ -365,7 +359,7 @@ class SecureProtocol:
     def destroy_session(self, session_id: str):
         """
         Destroy session and all keys.
-        Lab 15: Ensure forward secrecy.
+        Ensure forward secrecy.
         """
         if session_id in self.sessions:
             session = self.sessions[session_id]

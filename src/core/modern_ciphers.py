@@ -1,6 +1,6 @@
 """
 Modern Ciphers Module
-Lab 05 Concepts: XOR-based Stream Cipher and Mini Block Cipher
+XOR-based Stream Cipher and Mini Block Cipher
 """
 
 import os
@@ -9,7 +9,7 @@ import os
 class XORStreamCipher:
     """
     XOR Stream Cipher: Uses XOR operation with a key stream
-    Lab 05 Concept - Stream Cipher
+    Stream cipher concept
     """
     
     def __init__(self, key=None):
@@ -80,7 +80,7 @@ class XORStreamCipher:
 class MiniBlockCipher:
     """
     Mini Block Cipher: Simple substitution-permutation network
-    Lab 05 Concept - Block Cipher
+    Block cipher concept
     Operates on 8-byte blocks with substitution and permutation rounds
     """
     
