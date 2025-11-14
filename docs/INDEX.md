@@ -15,11 +15,16 @@ Welcome to the Secure Messaging System documentation!
 - **[Storage Guide](guides/STORAGE.md)** - Data persistence and encryption
 - **[Demo Guide](guides/DEMO_GUIDE.md)** - Presentation and demonstration
 
-### Advanced Lab Guides (Labs 12-15)
+### Lab Guides (Labs 1-15)
+- **[Labs 01-04: Programming Fundamentals and Classical Ciphers](guides/LAB01-LAB04.md)** - Python basics, Caesar, Vigenere
+- **[Lab 05: Modern Ciphers](guides/LAB05.md)** - XOR stream cipher and block cipher
+- **[Lab 06: Hashing and Message Integrity](guides/LAB06.md)** - SHA-256 and HMAC
+- **[Lab 07: Blockchain](guides/LAB07.md)** - Message logging with immutability
+- **[Labs 08-11: Advanced Cryptographic Concepts](guides/LAB08-LAB11.md)** - Crypto math, ElGamal, KDC, digital signatures
 - **[Lab 12: Diffie-Hellman Key Exchange](guides/LAB12.md)** - Establishing shared secrets
 - **[Lab 13: AEAD](guides/LAB13.md)** - Authenticated encryption with associated data
 - **[Lab 14: Key Management](guides/LAB14.md)** - Key lifecycle, rotation, revocation
-- **[Lab 15: Post-Quantum & Forward Secrecy](guides/LAB15.md)** - Quantum-resistant crypto and ephemeral keys
+- **[Lab 15: Post-Quantum and Forward Secrecy](guides/LAB15.md)** - Quantum-resistant crypto and ephemeral keys
 
 ### API Reference
 - **[Architecture](api/ARCHITECTURE.md)** - System design and components
@@ -43,19 +48,20 @@ SMS/
 │
 ├── src/                          # Source code
 │   ├── core/                     # Core cryptography modules
-│   │   ├── authentication.py     # User authentication & sessions
-│   │   ├── blockchain.py         # Blockchain with PoW
-│   │   ├── classical_ciphers.py  # Caesar & Vigenère
-│   │   ├── modern_ciphers.py     # XOR & Block ciphers
-│   │   ├── hashing.py            # SHA-256 & HMAC
-│   │   ├── elgamal.py            # ElGamal & KDC
-│   │   ├── crypto_math.py        # Math primitives
+│   │   ├── authentication.py     # User authentication & sessions (Lab 01-02)
+│   │   ├── classical_ciphers.py  # Caesar & Vigenere ciphers (Lab 03-04)
+│   │   ├── modern_ciphers.py     # XOR & Block ciphers (Lab 05)
+│   │   ├── hashing.py            # SHA-256 & HMAC (Lab 06)
+│   │   ├── blockchain.py         # Blockchain with PoW (Lab 07)
+│   │   ├── crypto_math.py        # Math primitives (Lab 08)
+│   │   ├── elgamal.py            # ElGamal, KDC, signatures (Lab 09-11)
+│   │   ├── key_exchange.py       # Diffie-Hellman (Lab 12)
+│   │   ├── aead.py               # AEAD (Lab 13)
+│   │   ├── km.py                 # Key Management (Lab 14)
+│   │   ├── postquantum.py        # Post-Quantum & Forward Secrecy (Lab 15)
 │   │   ├── storage.py            # Encrypted storage
 │   │   ├── security_utils.py     # Security helpers
-│   │   ├── lab12_key_exchange.py # Diffie-Hellman (Lab 12)
-│   │   ├── lab13_aead.py         # AEAD (Lab 13)
-│   │   ├── lab14_km.py           # Key Management (Lab 14)
-│   │   └── lab15_postquantum.py  # Post-Quantum & Forward Secrecy (Lab 15)
+│   │   └── secure_protocol.py    # Protocol implementation
 │   │
 │   └── network/                  # Network modules
 │       ├── server.py             # Multi-user server
@@ -67,26 +73,30 @@ SMS/
 │   └── run_standalone.py         # Standalone mode
 │
 ├── tests/                        # Unit tests
-│   ├── test_authentication.py
-│   ├── test_blockchain.py
-│   ├── test_classical_ciphers.py
-│   ├── test_crypto_math.py
-│   ├── test_hashing.py
-│   ├── test_modern_ciphers.py
-│   ├── test_lab_concepts.py
-│   ├── test_lab12.py             # Lab 12 tests
-│   ├── test_lab13.py             # Lab 13 tests
-│   ├── test_lab14.py             # Lab 14 tests
-│   └── test_lab15.py             # Lab 15 tests
+│   ├── test_authentication.py    # Lab 01-02 tests
+│   ├── test_classical_ciphers.py # Lab 03-04 tests
+│   ├── test_modern_ciphers.py    # Lab 05 tests
+│   ├── test_hashing.py           # Lab 06 tests
+│   ├── test_blockchain.py        # Lab 07 tests
+│   ├── test_crypto_math.py       # Lab 08 tests
+│   ├── test_elgamal.py           # Lab 09-11 tests
+│   ├── test_key_exchange.py      # Lab 12 tests
+│   ├── test_aead.py              # Lab 13 tests
+│   ├── test_km.py                # Lab 14 tests
+│   ├── test_postquantum.py       # Lab 15 tests
+│   └── test_lab_concepts.py      # Integration tests
 │
 ├── examples/                     # Example scripts
 │   ├── demo_storage.py           # Storage demo
 │   ├── test_storage.py           # Storage tests
 │   ├── verify_fix.py             # Verification
-│   ├── demo_lab12.py             # DH key exchange demo
-│   ├── demo_lab13.py             # AEAD demo
-│   ├── demo_lab14.py             # Key management demo
-│   └── demo_lab15.py             # Post-quantum & forward secrecy demo
+│   ├── demo_lab_concepts.py      # All labs demo
+│   ├── demo_classical.py         # Lab 03-04 demos
+│   ├── demo_modern_crypto.py     # Lab 05-11 demos
+│   ├── demo_key_exchange.py      # Lab 12 demo
+│   ├── demo_aead.py              # Lab 13 demo
+│   ├── demo_key_management.py    # Lab 14 demo
+│   └── demo_postquantum.py       # Lab 15 demo
 │
 ├── docs/                         # Documentation
 │   ├── guides/                   # User guides

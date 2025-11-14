@@ -1,10 +1,10 @@
-# Lab 13 — AEAD (Authenticated Encryption with Associated Data)
+# Lab 13 - AEAD (Authenticated Encryption with Associated Data)
 
 ## Overview
 
 Lab 13 demonstrates **AEAD (Authenticated Encryption with Associated Data)**, a modern cryptographic construction that provides both confidentiality and integrity in a single operation.
 
-**Module**: `src/core/lab13_aead.py`
+**Module**: `src/core/aead.py`
 
 ## Concepts Demonstrated
 

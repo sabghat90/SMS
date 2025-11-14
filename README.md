@@ -10,15 +10,15 @@
 
 ---
 
-## 🆕 NEW: Labs 12-15 Secure Communication Protocol
+## NEW: Labs 12-15 Secure Communication Protocol
 
 **Production-grade security features now integrated!**
-- 🔐 **Lab 12**: Diffie-Hellman key exchange for secure session establishment
-- 🔐 **Lab 13**: AEAD (Authenticated Encryption) for confidentiality + integrity
-- 🔐 **Lab 14**: Automatic key rotation and lifecycle management
-- 🔐 **Lab 15**: Forward secrecy with ephemeral keys
+- **Lab 12**: Diffie-Hellman key exchange for secure session establishment
+- **Lab 13**: AEAD (Authenticated Encryption) for confidentiality + integrity
+- **Lab 14**: Automatic key rotation and lifecycle management
+- **Lab 15**: Forward secrecy with ephemeral keys
 
-👉 **[Quick Start Guide](QUICKSTART_SECURE.md)** | **[Try Interactive Demo](#secure-communication-demo)**
+**[Quick Start Guide](QUICKSTART_SECURE.md)** | **[Try Interactive Demo](#secure-communication-demo)**
 
 ---
 
@@ -52,14 +52,14 @@ cd SMS
 
 ### Run Modes
 
-#### 1. 🆕 Secure Communication Demo (Labs 12-15) ⭐
+#### 1. Secure Communication Demo (Labs 12-15)
 ```bash
 # Interactive demonstration of all security concepts
 python demo_secure_communication.py
 ```
 **What you'll see**: DH key exchange, AEAD encryption, key rotation, forward secrecy
 
-#### 2. 🆕 Secure Client-Server (Production-Grade Security) ⭐
+#### 2. Secure Client-Server (Production-Grade Security)
 ```bash
 # Terminal 1: Start Secure Server (port 5556)
 python secure_server.py

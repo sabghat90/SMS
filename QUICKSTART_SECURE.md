@@ -1,6 +1,6 @@
 # Quick Start: Secure Communication Demo
 
-## 🎯 What This Demonstrates
+## What This Demonstrates
 
 This project shows **all Lab 12-15 concepts working together** in a real-world secure messaging system:
 
@@ -9,9 +9,9 @@ This project shows **all Lab 12-15 concepts working together** in a real-world s
 - **Lab 14**: Key Management (rotation)
 - **Lab 15**: Forward Secrecy
 
-## 🚀 Three Ways to See It in Action
+## Three Ways to See It in Action
 
-### Option 1: Interactive Demo (Fastest) ⭐
+### Option 1: Interactive Demo (Fastest)
 
 ```powershell
 python demo_secure_communication.py
@@ -28,7 +28,7 @@ python demo_secure_communication.py
 
 ---
 
-### Option 2: Secure Client-Server (Real Communication) ⭐⭐
+### Option 2: Secure Client-Server (Real Communication)
 
 **Step 1**: Start the secure server
 
@@ -39,7 +39,7 @@ python secure_server.py
 
 You'll see:
 ```
-🔐 SECURE MESSAGING SERVER 🔐
+SECURE MESSAGING SERVER
 Server started on 127.0.0.1:5556
 Security features:
   • Lab 12: DH Key Exchange

@@ -1,10 +1,10 @@
-# Lab 14 — Key Management
+# Lab 14 - Key Management
 
 ## Overview
 
 Lab 14 demonstrates **secure key lifecycle management**, a critical aspect of cryptographic systems that is often overlooked. Poor key management is one of the most common causes of security breaches.
 
-**Module**: `src/core/lab14_km.py`
+**Module**: `src/core/km.py`
 
 ## Concepts Demonstrated
 

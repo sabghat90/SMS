@@ -1,11 +1,11 @@
-# 🚀 Quick Start - Combined Mode
+# Quick Start - Combined Mode
 
 ## What is Combined Mode?
 
 **Combined Mode** automatically provides:
-- ✅ Secure transport using Labs 12-15 (DH + AEAD + Rotation + Forward Secrecy)
-- ✅ Educational cipher selection using Labs 1-11 (Caesar/Vigenere/XOR/Block)
-- ✅ Two-layer encryption for maximum security + learning
+- Secure transport using Labs 12-15 (DH + AEAD + Rotation + Forward Secrecy)
+- Educational cipher selection using Labs 1-11 (Caesar/Vigenere/XOR/Block)
+- Two-layer encryption for maximum security + learning
 
 **No mode selection needed** - it just works!
 
@@ -20,10 +20,10 @@ python server.py
 
 **Expected**:
 ```
-🔐 SECURE MESSAGING SERVER 🔐
+SECURE MESSAGING SERVER
 Server started on 127.0.0.1:5555
 
-🔒 Security Features Enabled:
+Security Features Enabled:
   • Lab 12: Diffie-Hellman Key Exchange
   • Lab 13: AEAD Encryption
   • Lab 14: Automatic Key Rotation
@@ -42,11 +42,11 @@ python client.py
 **What You'll See** (NEW - No mode prompt!):
 ```
 ============================================================
-            🔒 SECURE MESSAGING CLIENT 🔒
+            SECURE MESSAGING CLIENT
         Combined Mode: Secure Transport + Ciphers
 ============================================================
 
-✓ Connected to server at 127.0.0.1:5555
+Connected to server at 127.0.0.1:5555
 
 [Security] Establishing secure transport layer...
   • Lab 12: Diffie-Hellman key exchange

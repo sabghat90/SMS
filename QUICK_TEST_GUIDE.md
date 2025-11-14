@@ -1,4 +1,4 @@
-# 🚀 Quick Test Guide - Verify All Fixes
+# Quick Test Guide - Verify All Fixes
 
 ## Automated Test (Run First)
 ```powershell
@@ -7,9 +7,9 @@ python test_fixes.py
 
 **Expected Output**:
 ```
-✓ PASSED: Blockchain Validation
-✓ PASSED: Blockchain Performance
-✓ ALL TESTS PASSED
+PASSED: Blockchain Validation
+PASSED: Blockchain Performance
+ALL TESTS PASSED
 ```
 
 ---

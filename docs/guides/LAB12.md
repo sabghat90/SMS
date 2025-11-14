@@ -1,10 +1,10 @@
-# Lab 12 — Diffie-Hellman Key Exchange
+# Lab 12 - Diffie-Hellman Key Exchange
 
 ## Overview
 
 Lab 12 demonstrates **Diffie-Hellman (DH) key exchange**, a foundational protocol that allows two parties to establish a shared secret over an insecure channel without ever transmitting the secret itself.
 
-**Module**: `src/core/lab12_key_exchange.py`
+**Module**: `src/core/key_exchange.py`
 
 ## Concepts Demonstrated
 

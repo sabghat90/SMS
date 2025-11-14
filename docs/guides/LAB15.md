@@ -1,4 +1,4 @@
-# Lab 15 — Post-Quantum Cryptography & Forward Secrecy
+# Lab 15 - Post-Quantum Cryptography and Forward Secrecy
 
 ## Overview
 
@@ -7,7 +7,7 @@ Lab 15 demonstrates two critical modern security concepts that address emerging 
 1. **Forward Secrecy**: Protecting past sessions even if long-term keys are compromised
 2. **Post-Quantum Readiness**: Preparing for quantum computers that could break current cryptography
 
-**Module**: `src/core/lab15_postquantum.py`
+**Module**: `src/core/postquantum.py`
 
 ## Part A: Forward Secrecy
 
