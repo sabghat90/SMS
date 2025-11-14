@@ -18,7 +18,7 @@
 - **Lab 14**: Automatic key rotation and lifecycle management
 - **Lab 15**: Forward secrecy with ephemeral keys
 
-**[Project Overview](Docs/PROJECT_SYNOPSIS.md)**
+**[Project Overview](https://github.com/sabghat90/SMS/blob/main/docs/PROJECT_SYNOPSIS.md)**
 
 ---
 
