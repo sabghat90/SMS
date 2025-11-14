@@ -1,7 +1,6 @@
 """
 Secure Messaging System - Server
 Network-based server for multi-user messaging across terminals
-Now with Labs 12-15 security: DH key exchange, AEAD, key rotation, forward secrecy
 """
 
 import socket
@@ -49,7 +48,6 @@ class MessageServer:
                 self.user_keys[username] = key_obj
                 self.kdc.register_user(username, key_obj)
         
-        # Labs 12-15: Secure protocol for DH handshake, AEAD, key rotation, forward secrecy
         self.protocol = SecureProtocol(is_server=True)
         
         self.clients = {}  # {username: (client_socket, session_id)}
@@ -99,11 +97,6 @@ class MessageServer:
             print(" "*15 + " SECURE MESSAGING SERVER ")
             print("="*60)
             print(f"\nServer started on {self.host}:{self.port}")
-            print(f"\n Security Features Enabled:")
-            print(f"  • Lab 12: Diffie-Hellman Key Exchange")
-            print(f"  • Lab 13: AEAD Encryption")
-            print(f"  • Lab 14: Automatic Key Rotation")
-            print(f"  • Lab 15: Forward Secrecy")
             print(f"\nWaiting for connections...")
             print(f"Press Ctrl+C to stop the server\n")
             
@@ -134,7 +127,7 @@ class MessageServer:
             self.stop()
     
     def _handle_client(self, client_socket, address):
-        """Handle individual client connection with Labs 12-15 security"""
+        """Handle individual client connection"""
         username = None
         session_id = None
         secure_mode = False
@@ -153,7 +146,7 @@ class MessageServer:
                     msg_type = request.get('type')
                     command = request.get('command')
                     
-                    # Lab 12: Handle DH handshake
+                    # Handle DH handshake
                     if msg_type == 'HANDSHAKE_INIT':
                         print(f"[Security] DH handshake initiated from {address}")
                         response = self._handle_handshake(request)
@@ -162,13 +155,13 @@ class MessageServer:
                         self._send_response(client_socket, response)
                         continue
                     
-                    # Lab 13: Handle AEAD encrypted messages
+                    # Handle AEAD encrypted messages
                     elif msg_type == 'SECURE_MESSAGE' and secure_mode:
                         response = self._handle_secure_message(request, session_id)
                         self._send_response(client_socket, response)
                         continue
                     
-                    # Lab 14: Handle key rotation
+                    # Handle key rotation
                     elif msg_type == 'KEY_ROTATION' and secure_mode:
                         print(f"[Security] Key rotation requested for session {session_id}")
                         response = self._handle_key_rotation(request)
@@ -221,7 +214,7 @@ class MessageServer:
             print(f"Error handling client {address}: {e}")
         
         finally:
-            # Lab 15: Clean up session (forward secrecy)
+            # Clean up session (forward secrecy)
             if session_id and session_id in self.protocol.sessions:
                 self.protocol.destroy_session(session_id)
                 print(f"[Security] Session {session_id} destroyed (forward secrecy)")
@@ -245,7 +238,7 @@ class MessageServer:
             print(f"Error sending response: {e}")
     
     def _handle_handshake(self, request):
-        """Handle secure handshake (Lab 12: DH Key Exchange)"""
+        """Handle secure handshake"""
         try:
             handshake_response, session = self.protocol.respond_to_handshake(request)
             session_id = request['session_id']
@@ -255,7 +248,7 @@ class MessageServer:
             return {'status': 'error', 'message': f'Handshake failed: {str(e)}'}
     
     def _handle_secure_message(self, request, session_id):
-        """Handle secure encrypted message (Lab 13: AEAD)"""
+        """Handle secure encrypted message"""
         try:
             if session_id not in self.protocol.sessions:
                 return {'status': 'error', 'message': 'Invalid session'}
@@ -277,7 +270,7 @@ class MessageServer:
             return {'status': 'error', 'message': f'Secure message failed: {str(e)}'}
     
     def _handle_key_rotation(self, request):
-        """Handle key rotation request (Lab 14)"""
+        """Handle key rotation request"""
         try:
             session_id = request['session_id']
             rotation_response = self.protocol.rotate_session_key(session_id)
