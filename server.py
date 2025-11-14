@@ -1,6 +1,7 @@
 """
 Secure Messaging System - Server
 Network-based server for multi-user messaging across terminals
+Now with Labs 12-15 security: DH key exchange, AEAD, key rotation, forward secrecy
 """
 
 import socket
@@ -14,6 +15,7 @@ from src.core.hashing import MessageIntegrity
 from src.core.blockchain import MessageBlockchain
 from src.core.elgamal import ElGamal, KeyDistributionCenter, ElGamalKeyPair
 from src.core.storage import SecureStorage
+from src.core.secure_protocol import SecureProtocol
 
 
 class MessageServer:
@@ -47,7 +49,11 @@ class MessageServer:
                 self.user_keys[username] = key_obj
                 self.kdc.register_user(username, key_obj)
         
-        self.clients = {}  # {username: client_socket}
+        # Labs 12-15: Secure protocol for DH handshake, AEAD, key rotation, forward secrecy
+        self.protocol = SecureProtocol(is_server=True)
+        
+        self.clients = {}  # {username: (client_socket, session_id)}
+        self.sessions = {}  # {session_id: username}
         self.client_threads = []
         
         self.lock = threading.Lock()
@@ -90,10 +96,15 @@ class MessageServer:
             self.running = True
             
             print("\n" + "="*60)
-            print(" "*15 + "SECURE MESSAGING SERVER")
+            print(" "*15 + " SECURE MESSAGING SERVER ")
             print("="*60)
             print(f"\nServer started on {self.host}:{self.port}")
-            print(f"Waiting for connections...")
+            print(f"\n Security Features Enabled:")
+            print(f"  • Lab 12: Diffie-Hellman Key Exchange")
+            print(f"  • Lab 13: AEAD Encryption")
+            print(f"  • Lab 14: Automatic Key Rotation")
+            print(f"  • Lab 15: Forward Secrecy")
+            print(f"\nWaiting for connections...")
             print(f"Press Ctrl+C to stop the server\n")
             
             while self.running:
@@ -123,21 +134,50 @@ class MessageServer:
             self.stop()
     
     def _handle_client(self, client_socket, address):
-        """Handle individual client connection"""
+        """Handle individual client connection with Labs 12-15 security"""
         username = None
+        session_id = None
+        secure_mode = False
         
         try:
+            # Set socket timeout to prevent hanging
+            client_socket.settimeout(30.0)
+            
             while self.running:
-                data = client_socket.recv(4096)
-                if not data:
-                    break
-                
                 try:
+                    data = client_socket.recv(16384)  # Increased buffer for encrypted data
+                    if not data:
+                        break
+                    
                     request = json.loads(data.decode('utf-8'))
+                    msg_type = request.get('type')
                     command = request.get('command')
                     
+                    # Lab 12: Handle DH handshake
+                    if msg_type == 'HANDSHAKE_INIT':
+                        print(f"[Security] DH handshake initiated from {address}")
+                        response = self._handle_handshake(request)
+                        session_id = request['session_id']
+                        secure_mode = True
+                        self._send_response(client_socket, response)
+                        continue
+                    
+                    # Lab 13: Handle AEAD encrypted messages
+                    elif msg_type == 'SECURE_MESSAGE' and secure_mode:
+                        response = self._handle_secure_message(request, session_id)
+                        self._send_response(client_socket, response)
+                        continue
+                    
+                    # Lab 14: Handle key rotation
+                    elif msg_type == 'KEY_ROTATION' and secure_mode:
+                        print(f"[Security] Key rotation requested for session {session_id}")
+                        response = self._handle_key_rotation(request)
+                        self._send_response(client_socket, response)
+                        continue
+                    
+                    # Regular commands (backward compatibility)
                     if command == 'LOGIN':
-                        response = self._handle_login(request, client_socket)
+                        response = self._handle_login(request, client_socket, session_id)
                         if response['status'] == 'success':
                             username = request['username']
                     
@@ -169,18 +209,29 @@ class MessageServer:
                     
                     self._send_response(client_socket, response)
                 
+                except socket.timeout:
+                    continue  # Continue waiting for data
                 except json.JSONDecodeError:
                     error_response = {'status': 'error', 'message': 'Invalid JSON'}
                     self._send_response(client_socket, error_response)
         
+        except socket.timeout:
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] Client {address} timed out")
         except Exception as e:
             print(f"Error handling client {address}: {e}")
         
         finally:
+            # Lab 15: Clean up session (forward secrecy)
+            if session_id and session_id in self.protocol.sessions:
+                self.protocol.destroy_session(session_id)
+                print(f"[Security] Session {session_id} destroyed (forward secrecy)")
+            
             if username:
                 with self.lock:
                     if username in self.clients:
                         del self.clients[username]
+                    if session_id and session_id in self.sessions:
+                        del self.sessions[session_id]
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] {username} disconnected")
             
             client_socket.close()
@@ -193,7 +244,68 @@ class MessageServer:
         except Exception as e:
             print(f"Error sending response: {e}")
     
-    def _handle_login(self, request, client_socket):
+    def _handle_handshake(self, request):
+        """Handle secure handshake (Lab 12: DH Key Exchange)"""
+        try:
+            handshake_response, session = self.protocol.respond_to_handshake(request)
+            session_id = request['session_id']
+            self.sessions[session_id] = None  # Username set on login
+            return handshake_response
+        except Exception as e:
+            return {'status': 'error', 'message': f'Handshake failed: {str(e)}'}
+    
+    def _handle_secure_message(self, request, session_id):
+        """Handle secure encrypted message (Lab 13: AEAD)"""
+        try:
+            if session_id not in self.protocol.sessions:
+                return {'status': 'error', 'message': 'Invalid session'}
+            
+            # Decrypt the message
+            decrypted = self.protocol.receive_secure_message(session_id, request)
+            command_data = json.loads(decrypted)
+            
+            # Process the command
+            response = self._process_command(command_data, session_id)
+            
+            # Encrypt the response
+            response_json = json.dumps(response)
+            encrypted_response = self.protocol.send_secure_message(
+                session_id, response_json, {'response_to': command_data.get('command')}
+            )
+            return encrypted_response
+        except Exception as e:
+            return {'status': 'error', 'message': f'Secure message failed: {str(e)}'}
+    
+    def _handle_key_rotation(self, request):
+        """Handle key rotation request (Lab 14)"""
+        try:
+            session_id = request['session_id']
+            rotation_response = self.protocol.rotate_session_key(session_id)
+            self.protocol.complete_key_rotation(session_id, request)
+            return rotation_response
+        except Exception as e:
+            return {'status': 'error', 'message': f'Key rotation failed: {str(e)}'}
+    
+    def _process_command(self, request, session_id):
+        """Process command (for both secure and regular modes)"""
+        command = request.get('command')
+        
+        if command == 'LOGIN':
+            return self._handle_login(request, None, session_id)
+        elif command == 'SEND_MESSAGE':
+            return self._handle_send_message(request)
+        elif command == 'GET_MESSAGES':
+            return self._handle_get_messages(request)
+        elif command == 'GET_USERS':
+            return self._handle_get_users(request)
+        elif command == 'VERIFY_BLOCKCHAIN':
+            return self._handle_verify_blockchain()
+        elif command == 'GET_BLOCKCHAIN':
+            return self._handle_get_blockchain()
+        else:
+            return {'status': 'error', 'message': 'Unknown command'}
+    
+    def _handle_login(self, request, client_socket, session_id=None):
         """Handle login request"""
         username = request.get('username')
         password = request.get('password')
@@ -202,16 +314,21 @@ class MessageServer:
         
         if success:
             with self.lock:
-                self.clients[username] = client_socket
+                if client_socket:
+                    self.clients[username] = (client_socket, session_id)
+                if session_id:
+                    self.sessions[session_id] = username
             
-            session_id = message.split(": ")[1]
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] {username} logged in")
+            auth_session_id = message.split(": ")[1] if ": " in message else None
+            print(f"[{datetime.now().strftime('%H:%M:%S')}] {username} logged in" + 
+                  (f" (secure session: {session_id})" if session_id else ""))
             
             return {
                 'status': 'success',
                 'message': 'Login successful',
-                'session_id': session_id,
-                'username': username
+                'session_id': auth_session_id or session_id,
+                'username': username,
+                'secure_session': session_id is not None
             }
         else:
             return {'status': 'error', 'message': message}
@@ -253,6 +370,7 @@ class MessageServer:
         encryption_method = request.get('encryption_method')
         encryption_params = request.get('encryption_params', {})
         
+        # Check receiver exists (no lock needed)
         if not self.kdc.is_user_registered(receiver):
             return {'status': 'error', 'message': f"User '{receiver}' not found"}
         
@@ -284,6 +402,7 @@ class MessageServer:
             else:
                 return {'status': 'error', 'message': 'Invalid encryption method'}
             
+            # Only lock for blockchain operations (minimized lock time)
             with self.lock:
                 block = self.blockchain.add_message_block(
                     sender=sender,
@@ -295,6 +414,7 @@ class MessageServer:
             
             print(f"[{datetime.now().strftime('%H:%M:%S')}] Message: {sender} -> {receiver} (Block #{block.index})")
             
+            # Notify receiver (outside lock to avoid blocking)
             if receiver in self.clients:
                 notification = {
                     'type': 'NEW_MESSAGE',
@@ -302,7 +422,8 @@ class MessageServer:
                     'timestamp': block.timestamp
                 }
                 try:
-                    self._send_response(self.clients[receiver], notification)
+                    receiver_socket = self.clients[receiver][0]  # Get socket from tuple
+                    self._send_response(receiver_socket, notification)
                 except:
                     pass
             

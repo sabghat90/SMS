@@ -209,19 +209,24 @@ class MessageBlockchain:
         2. Each block correctly references previous block
         
         Returns:
-            bool for test compatibility (just validity status)
+            tuple: (is_valid, message) for server compatibility
         """
+        if len(self.chain) == 0:
+            return (False, "Blockchain is empty")
+        
         for i in range(1, len(self.chain)):
             current_block = self.chain[i]
             previous_block = self.chain[i - 1]
             
+            # Recalculate hash to verify integrity
             if current_block.hash != current_block.calculate_hash():
-                return False
+                return (False, f"Block {i} has invalid hash")
             
+            # Check chain linkage
             if current_block.previous_hash != previous_block.hash:
-                return False
+                return (False, f"Block {i} has invalid previous_hash reference")
         
-        return True
+        return (True, f"Blockchain is valid ({len(self.chain)} blocks)")
     
     def get_messages_for_user(self, username):
         """

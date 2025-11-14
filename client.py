@@ -2,14 +2,17 @@
 Secure Messaging System - Client
 Network client for connecting to the messaging server
 Run this in separate terminals for different users
+Now with Labs 12-15 security: DH key exchange, AEAD, key rotation, forward secrecy
 """
 
 import socket
 import json
+import secrets
 import threading
 from src.core.classical_ciphers import CaesarCipher, VigenereCipher
 from src.core.modern_ciphers import XORStreamCipher, MiniBlockCipher
 from src.core.hashing import MessageIntegrity
+from src.core.secure_protocol import SecureProtocol
 
 
 class MessageClient:
@@ -26,28 +29,100 @@ class MessageClient:
         self.session_id = None
         self.running = False
         
+        # Labs 12-15: Secure protocol for DH handshake, AEAD, key rotation, forward secrecy
+        self.protocol = SecureProtocol(is_server=False)
+        self.secure_session_id = None
+        self.secure_mode = False
+        
         self.notification_thread = None
     
     def connect(self):
-        """Connect to server"""
+        """Connect to server and establish secure session (Labs 12-15)"""
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.host, self.port))
             self.connected = True
             self.running = True
             print(f"\nConnected to server at {self.host}:{self.port}")
-            return True
+            
+            # Always establish secure session for transport layer security
+            print("\n[Security] Establishing secure transport layer...")
+            return self._establish_secure_session()
+            
         except Exception as e:
             print(f"\nCould not connect to server: {e}")
             print(f"Make sure the server is running!")
             return False
     
     def disconnect(self):
-        """Disconnect from server"""
+        """Disconnect from server and destroy session (Lab 15: Forward Secrecy)"""
         self.running = False
         
         if self.connected and self.username:
-            self._send_request({'command': 'LOGOUT'})
+            if self.secure_mode:
+                self._send_secure_command({'command': 'LOGOUT'})
+            else:
+                self._send_request({'command': 'LOGOUT'})
+        
+        # Lab 15: Destroy session for forward secrecy
+        if self.secure_session_id and self.secure_session_id in self.protocol.sessions:
+            self.protocol.destroy_session(self.secure_session_id)
+            print("\n[Security] Session destroyed - forward secrecy achieved")
+        
+        if self.socket:
+            try:
+                self.socket.close()
+            except:
+                pass
+        
+        self.connected = False
+        print("\n✓ Disconnected from server")
+    
+    def _establish_secure_session(self):
+        """Establish secure session using DH key exchange (Lab 12 + Lab 15)"""
+        try:
+            print("\n[Security] Establishing secure session...")
+            print("  • Lab 12: Diffie-Hellman key exchange")
+            print("  • Lab 15: Ephemeral keys for forward secrecy")
+            
+            # Create session and initiate handshake
+            self.secure_session_id = f"client-{secrets.token_hex(8)}"
+            session = self.protocol.create_session(self.secure_session_id)
+            
+            print(f"\n[Security] Generated ephemeral DH keys")
+            print(f"  Public key: {hex(session.get_public_key())[:40]}...")
+            
+            # Send handshake
+            handshake_init = self.protocol.initiate_handshake(self.secure_session_id)
+            self._send_request(handshake_init)
+            
+            # Receive handshake response
+            handshake_response = self._receive_response()
+            
+            if handshake_response and handshake_response.get('type') == 'HANDSHAKE_RESPONSE':
+                # Complete handshake
+                self.protocol.complete_handshake(self.secure_session_id, handshake_response)
+                self.secure_mode = True
+                
+                session_key = self.protocol.sessions[self.secure_session_id].session_key
+                print(f"\n✓ Secure transport layer established!")
+                print(f"  Session ID: {self.secure_session_id}")
+                print(f"  Session key: {session_key.hex()[:40]}...")
+                print(f"\n[Security] Transport Layer: AEAD encrypted (Lab 13)")
+                print(f"[Security] Message Layer: You can choose classical ciphers")
+                print(f"\nCombined Mode: Secure transport + Educational ciphers")
+                
+                return True
+            else:
+                print(f"\nHandshake failed")
+                self.secure_mode = False
+                return True
+                
+        except Exception as e:
+            print(f"\nSecure session establishment failed: {e}")
+            print("Falling back to basic mode")
+            self.secure_mode = False
+            return True
         
         if self.socket:
             try:
@@ -75,13 +150,44 @@ class MessageClient:
             print(f"\nError sending request: {e}")
             return False
     
-    def _receive_response(self, timeout=5):
+    def _send_secure_command(self, command):
+        """Send command encrypted with AEAD (Lab 13)"""
+        try:
+            if not self.secure_mode:
+                # Fallback to regular send
+                return self._send_request(command)
+            
+            # Convert command to JSON
+            command_json = json.dumps(command)
+            
+            # Encrypt with AEAD (Lab 13)
+            encrypted = self.protocol.send_secure_message(
+                self.secure_session_id,
+                command_json,
+                {'command': command.get('command')}
+            )
+            
+            # Check if key rotation needed (Lab 14)
+            if encrypted.get('type') == 'KEY_ROTATION_REQUIRED':
+                print("\n[Security] Key rotation needed - rotating keys...")
+                self._rotate_keys()
+                # Retry after rotation
+                return self._send_secure_command(command)
+            
+            # Send encrypted message
+            return self._send_request(encrypted)
+            
+        except Exception as e:
+            print(f"\nError sending secure command: {e}")
+            return False
+    
+    def _receive_response(self, timeout=10):
         """Receive response from server"""
         try:
             # Temporarily disable notification listener during request/response
             original_timeout = self.socket.gettimeout()
             self.socket.settimeout(timeout)
-            data = self.socket.recv(4096)
+            data = self.socket.recv(16384)  # Increased for encrypted data
             self.socket.settimeout(original_timeout)
             
             if data:
@@ -92,6 +198,58 @@ class MessageClient:
             return {'status': 'error', 'message': 'Server timeout'}
         except Exception as e:
             return {'status': 'error', 'message': f'Error: {str(e)}'}
+    
+    def _receive_secure_response(self, timeout=10):
+        """Receive and decrypt response (Lab 13: AEAD)"""
+        try:
+            encrypted_response = self._receive_response(timeout)
+            
+            if not encrypted_response or not self.secure_mode:
+                return encrypted_response
+            
+            # Check if it's encrypted
+            if encrypted_response.get('type') == 'SECURE_MESSAGE':
+                # Decrypt with AEAD
+                decrypted_json = self.protocol.receive_secure_message(
+                    self.secure_session_id,
+                    encrypted_response
+                )
+                return json.loads(decrypted_json)
+            else:
+                # Plain response (e.g., error)
+                return encrypted_response
+                
+        except Exception as e:
+            return {'status': 'error', 'message': f'Decryption error: {str(e)}'}
+    
+    def _rotate_keys(self):
+        """Perform key rotation (Lab 14 + Lab 15)"""
+        try:
+            print("[Security] Initiating key rotation...")
+            
+            # Generate new ephemeral keys
+            rotation_req = self.protocol.rotate_session_key(self.secure_session_id)
+            
+            # Send to server
+            self._send_request(rotation_req)
+            
+            # Receive server's new keys
+            rotation_resp = self._receive_response()
+            
+            if rotation_resp and rotation_resp.get('type') == 'KEY_ROTATION':
+                # Complete rotation
+                self.protocol.complete_key_rotation(self.secure_session_id, rotation_resp)
+                
+                print("Key rotation complete")
+                print(f"New session key established")
+                return True
+            else:
+                print("Key rotation failed")
+                return False
+                
+        except Exception as e:
+            print(f"Key rotation error: {e}")
+            return False
     
     def _listen_for_notifications(self):
         """Listen for server notifications in background"""
@@ -126,14 +284,28 @@ class MessageClient:
             'password': password
         }
         
-        if self._send_request(request):
-            response = self._receive_response()
+        # Use secure or regular mode
+        send_func = self._send_secure_command if self.secure_mode else self._send_request
+        recv_func = self._receive_secure_response if self.secure_mode else self._receive_response
+        
+        if send_func(request):
+            response = recv_func()
             
             if response and response['status'] == 'success':
                 self.username = username
                 self.session_id = response['session_id']
-                print(f"\n{response['message']}")
-                print(f"Welcome, {self.username}!")
+                
+                if self.secure_mode:
+                    print(f"\n{response['message']} (Secure Mode)")
+                    print(f"Welcome, {self.username}!")
+                    print(f"\n[Security] Logged in with:")
+                    print(f"  • Lab 12: Session key from DH exchange")
+                    print(f"  • Lab 13: All messages encrypted with AEAD")
+                    print(f"  • Lab 14: Automatic key rotation enabled")
+                    print(f"  • Lab 15: Forward secrecy on disconnect")
+                else:
+                    print(f"\n{response['message']}")
+                    print(f"Welcome, {self.username}!")
                 
                 self.notification_thread = threading.Thread(
                     target=self._listen_for_notifications,
@@ -163,8 +335,12 @@ class MessageClient:
             'email': email
         }
         
-        if self._send_request(request):
-            response = self._receive_response()
+        # Use secure or regular mode
+        send_func = self._send_secure_command if self.secure_mode else self._send_request
+        recv_func = self._receive_secure_response if self.secure_mode else self._receive_response
+        
+        if send_func(request):
+            response = recv_func()
             
             if response and response['status'] == 'success':
                 print(f"\n{response['message']}")
@@ -184,14 +360,19 @@ class MessageClient:
     def send_message(self):
         """Send encrypted message"""
         print("\n--- SEND MESSAGE ---")
+        print("[Transport: Secure AEAD | Message: Choose Cipher Below]")
         
         request = {
             'command': 'GET_USERS',
             'username': self.username
         }
         
-        if self._send_request(request):
-            response = self._receive_response()
+        # Use secure or regular mode
+        send_func = self._send_secure_command if self.secure_mode else self._send_request
+        recv_func = self._receive_secure_response if self.secure_mode else self._receive_response
+        
+        if send_func(request):
+            response = recv_func()
             
             if response and response['status'] == 'success':
                 users = response['users']
@@ -203,7 +384,7 @@ class MessageClient:
                 
                 print(f"\nAvailable users:")
                 for user in users:
-                    status = "+ online" if user in online_users else "X offline"
+                    status = "* online" if user in online_users else "X offline"
                     print(f"  - {user} ({status})")
                 
                 receiver = input("\nReceiver: ").strip()
@@ -218,7 +399,8 @@ class MessageClient:
                     print("\nMessage cannot be empty")
                     return
                 
-                print("\n--- SELECT ENCRYPTION ---")
+                # Combined mode: Always show cipher selection
+                print("\n--- SELECT MESSAGE ENCRYPTION (Educational Layer) ---")
                 print("1. Caesar Cipher")
                 print("2. Vigenère Cipher")
                 print("3. XOR Stream Cipher")
@@ -267,8 +449,8 @@ class MessageClient:
                     'encryption_params': encryption_params
                 }
                 
-                if self._send_request(request):
-                    response = self._receive_response(timeout=10)
+                if send_func(request):
+                    response = recv_func(timeout=15)
                     
                     if response and response['status'] == 'success':
                         print(f"\nMessage sent successfully!")
@@ -276,11 +458,15 @@ class MessageClient:
                         print(f"Block hash: {response['block_hash'][:32]}...")
                         print(f"Message hash: {response['message_hash'][:32]}...")
                         
+                        print(f"\n[Security] Two-Layer Encryption Applied:")
+                        print(f"Layer 1 (Transport): AEAD with DH session key (Labs 12-13)")
+                        print(f"Layer 2 (Message): {encryption_method} cipher")
+                        
                         if 'encryption_params' in response:
                             params = response['encryption_params']
                             if 'key_hex' in params:
                                 print(f"\nSAVE THIS KEY FOR DECRYPTION:")
-                                print(f"Key (hex): {params['key_hex']}")
+                                print(f"   Key (hex): {params['key_hex']}")
                     else:
                         msg = response.get('message') if isinstance(response, dict) else 'Failed to send'
                         print(f"\n{msg}")
@@ -436,20 +622,22 @@ class MessageClient:
     def display_banner(self):
         """Display client banner"""
         print("\n" + "="*60)
-        print(" "*15 + "SECURE MESSAGING CLIENT")
-        print(" "*10 + "Multi-Terminal Messaging System")
+        print(" "*12 + "SECURE MESSAGING CLIENT")
         print("="*60 + "\n")
     
     def display_menu(self):
         """Display menu"""
-        print(f"\n[Logged in as: {self.username}]")
+        print(f"\n[Logged in as: {self.username} COMBINED MODE]")
+        print("[Transport: Secure Protocol | Message: Classical Ciphers]")
+        
         print("\n--- MENU ---")
-        print("1. Send Message")
+        print("1. Send Message (Classical Cipher over Secure Transport)")
         print("2. View Messages")
         print("3. View Blockchain")
         print("4. Verify Blockchain")
-        print("5. Logout")
-        print("6. Exit")
+        print("5. Manual Key Rotation (Lab 14)")
+        print("6. Logout")
+        print("7. Exit")
     
     def run(self):
         """Run client application"""
@@ -479,7 +667,7 @@ class MessageClient:
         while self.running:
             try:
                 self.display_menu()
-                choice = input("\n> ").strip()
+                choice = input("\nChoice > ").strip()
                 
                 if choice == '1':
                     self.send_message()
@@ -490,10 +678,13 @@ class MessageClient:
                 elif choice == '4':
                     self.verify_blockchain()
                 elif choice == '5':
+                    print("\n[Security] Manually rotating keys...")
+                    self._rotate_keys()
+                elif choice == '6':
                     print("\nLogging out...")
                     self.disconnect()
                     break
-                elif choice == '6':
+                elif choice == '7':
                     print("\nExiting...")
                     self.disconnect()
                     break

@@ -2,22 +2,36 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Lab Concepts](https://img.shields.io/badge/Lab%20Concepts-100%25-success.svg)](docs/api/LAB_MAPPING.md)
-[![Security](https://img.shields.io/badge/Security-XOR%20%2B%20HMAC-orange.svg)](docs/guides/STORAGE_LAB_CONCEPTS.md)
+[![Lab Concepts](https://img.shields.io/badge/Lab%20Concepts-Labs%201--15-success.svg)](docs/api/LAB_MAPPING.md)
+[![Security](https://img.shields.io/badge/Security-DH%20%2B%20AEAD%20%2B%20Forward%20Secrecy-orange.svg)](docs/guides/SECURE_COMMUNICATION.md)
 [![No Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen.svg)](requirements.txt)
 
-> A comprehensive cryptographic messaging system implementing **100% lab concepts** from Computer Security (Labs 01-11). This educational project demonstrates practical applications of classical ciphers, modern cryptography, blockchain technology, and secure networking - **without using any external cryptography libraries!**
+> A comprehensive cryptographic messaging system implementing **all lab concepts** from Computer Security (Labs 01-15). This educational project demonstrates practical applications of classical ciphers, modern cryptography, blockchain technology, and **secure communication protocols** - without using any external cryptography libraries!
+
+---
+
+## 🆕 NEW: Labs 12-15 Secure Communication Protocol
+
+**Production-grade security features now integrated!**
+- 🔐 **Lab 12**: Diffie-Hellman key exchange for secure session establishment
+- 🔐 **Lab 13**: AEAD (Authenticated Encryption) for confidentiality + integrity
+- 🔐 **Lab 14**: Automatic key rotation and lifecycle management
+- 🔐 **Lab 15**: Forward secrecy with ephemeral keys
+
+👉 **[Quick Start Guide](QUICKSTART_SECURE.md)** | **[Try Interactive Demo](#secure-communication-demo)**
 
 ---
 
 ## Highlights
 
-- **Pure Lab Concepts** - No external crypto libraries, only Labs 01-11 implementations  
-- **Multi-Layer Security** - XOR encryption + HMAC integrity + SHA-256 hashing  
+- **Pure Lab Concepts** - No external crypto libraries, Labs 01-15 implementations  
+- **Production-Grade Security** - DH key exchange + AEAD + Forward Secrecy (Labs 12-15)
+- **Multi-Layer Protection** - XOR encryption + HMAC integrity + SHA-256 hashing  
 - **Blockchain Ledger** - Immutable message history with Proof of Work  
-- **Network Ready** - Multi-user client-server architecture  
+- **Network Ready** - Multi-user client-server architecture with secure protocol
 - **Persistent Storage** - Encrypted data at rest with integrity verification  
 - **Fully Tested** - Comprehensive test suite with 100% lab concept coverage
+- **Interactive Demos** - Real-time demonstrations of all security concepts
 
 ---
 
@@ -38,24 +52,48 @@ cd SMS
 
 ### Run Modes
 
-#### 1. Standalone Mode (Single User)
+#### 1. 🆕 Secure Communication Demo (Labs 12-15) ⭐
 ```bash
-python main.py
+# Interactive demonstration of all security concepts
+python demo_secure_communication.py
 ```
+**What you'll see**: DH key exchange, AEAD encryption, key rotation, forward secrecy
 
-#### 2. Network Mode (Multi-User) - SIMPLIFIED!
+#### 2. 🆕 Secure Client-Server (Production-Grade Security) ⭐
 ```bash
-# Terminal 1: Start Server
+# Terminal 1: Start Secure Server (port 5556)
+python secure_server.py
+
+# Terminal 2: Start Secure Client (Alice)
+python secure_client.py
+
+# Terminal 3: Start Secure Client (Bob)
+python secure_client.py
+```
+**Features**: Automatic DH handshake, AEAD encryption, key rotation, forward secrecy
+
+#### 3. Original Client-Server (Basic Security)
+```bash
+# Terminal 1: Start Server (port 5555)
 python server.py
 
 # Terminal 2: Start Client
 python client.py
 ```
+**Features**: Classical & modern ciphers, blockchain, basic encryption
 
-#### 3. Run Tests
+#### 4. Standalone Mode (Single User)
 ```bash
-# Test lab concepts implementation
-python tests/test_lab_concepts.py
+python main.py
+```
+
+#### 5. Run Tests
+```bash
+# Test all labs 12-15
+python tests/test_lab12.py
+python tests/test_lab13.py
+python tests/test_lab14.py
+python tests/test_lab15.py
 
 # Run all tests
 python tests/run_tests.py
@@ -78,6 +116,10 @@ This project demonstrates **all 11 labs** in action:
 | **07** | Blockchain | `blockchain.py` | Message ledger with PoW |
 | **09** | ElGamal | `elgamal.py` | Public key cryptography |
 | **11** | Key Distribution | `elgamal.py` | KDC implementation |
+| **12** | Key Exchange | `lab12_key_exchange.py` | **Diffie-Hellman** for session keys |
+| **13** | AEAD | `lab13_aead.py` | **Authenticated Encryption** (confidentiality + integrity) |
+| **14** | Key Management | `lab14_km.py` | Key rotation, revocation, lifecycle |
+| **15** | Post-Quantum/Forward Secrecy | `lab15_postquantum.py` | Ephemeral keys, quantum-resistant crypto |
 
 **Detailed mapping**: [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 
@@ -359,6 +401,11 @@ python tests/test_lab_concepts.py
 - **For Security Details**: Read [STORAGE_LAB_CONCEPTS.md](docs/guides/STORAGE_LAB_CONCEPTS.md)
 - **For Lab Concepts**: See [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 - **For Implementation**: Check [LAB_CONCEPTS_IMPLEMENTATION.md](docs/LAB_CONCEPTS_IMPLEMENTATION.md)
+- **For Advanced Labs**:
+  - [LAB12.md](docs/guides/LAB12.md) - Diffie-Hellman Key Exchange
+  - [LAB13.md](docs/guides/LAB13.md) - AEAD (Authenticated Encryption)
+  - [LAB14.md](docs/guides/LAB14.md) - Key Management
+  - [LAB15.md](docs/guides/LAB15.md) - Post-Quantum & Forward Secrecy
 
 ---
 
@@ -373,6 +420,7 @@ python tests/test_lab_concepts.py
 5. **Key Management**: KDC and public key distribution
 6. **Data Protection**: Encryption at rest with integrity verification
 7. **Integration**: How multiple security concepts work together
+8. **Advanced Cryptography**: DH key exchange, AEAD, forward secrecy, post-quantum readiness
 
 ### Lab Concepts Demonstrated
 
@@ -383,6 +431,10 @@ python tests/test_lab_concepts.py
 - **Lab 07**: Blockchain providing audit trail
 - **Lab 09**: ElGamal enabling secure communication
 - **Lab 11**: KDC managing public keys
+- **Lab 12**: Diffie-Hellman key exchange for session establishment
+- **Lab 13**: AEAD combining encryption and authentication
+- **Lab 14**: Key lifecycle management (rotation, revocation)
+- **Lab 15**: Forward secrecy and post-quantum cryptography readiness
 
 ---
 
@@ -436,7 +488,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **Computer Security Labs 01-11**: Foundation for all concepts
+- **Computer Security Labs 01-15**: Foundation for all concepts
 - **Educational Purpose**: Designed for learning and demonstration
 - **Open Source**: Built with Python standard library
 
@@ -479,13 +531,28 @@ python client.py    # Terminal 2
 # Test lab concepts
 python tests/test_lab_concepts.py
 
+# Test Labs 12-15
+python tests/test_lab12.py
+python tests/test_lab13.py
+python tests/test_lab14.py
+python tests/test_lab15.py
+
 # Run all tests
 python tests/run_tests.py
+
+# Run lab demos
+python examples/demo_lab12.py  # Diffie-Hellman
+python examples/demo_lab13.py  # AEAD
+python examples/demo_lab14.py  # Key Management
+python examples/demo_lab15.py  # Post-Quantum & Forward Secrecy
 ```
 
 ### Features at a Glance
 
-- **5 Encryption Methods**: Caesar, Vigenère, XOR, Block, ElGamal
+- **9 Encryption Methods**: Caesar, Vigenère, XOR, Block, ElGamal, DH Key Exchange, AEAD
+- **Key Management**: Full lifecycle (creation, rotation, revocation)
+- **Forward Secrecy**: Ephemeral session keys
+- **Post-Quantum Ready**: Educational PQ primitives
 - **Blockchain**: Proof of Work message ledger
 - **Secure Storage**: XOR + HMAC encrypted files
 - **Multi-User**: Network server with KDC
@@ -499,6 +566,6 @@ python tests/run_tests.py
 
 **Built for Computer Security Education**
 
-**100% Lab Concepts** | **Production Ready for Learning** | **Educational Excellence**
+**100% Lab Concepts (01-15)** | **Production Ready for Learning** | **Educational Excellence**
 
 </div>

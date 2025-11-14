@@ -15,6 +15,12 @@ Welcome to the Secure Messaging System documentation!
 - **[Storage Guide](guides/STORAGE.md)** - Data persistence and encryption
 - **[Demo Guide](guides/DEMO_GUIDE.md)** - Presentation and demonstration
 
+### Advanced Lab Guides (Labs 12-15)
+- **[Lab 12: Diffie-Hellman Key Exchange](guides/LAB12.md)** - Establishing shared secrets
+- **[Lab 13: AEAD](guides/LAB13.md)** - Authenticated encryption with associated data
+- **[Lab 14: Key Management](guides/LAB14.md)** - Key lifecycle, rotation, revocation
+- **[Lab 15: Post-Quantum & Forward Secrecy](guides/LAB15.md)** - Quantum-resistant crypto and ephemeral keys
+
 ### API Reference
 - **[Architecture](api/ARCHITECTURE.md)** - System design and components
 - **[Lab Mapping](api/LAB_MAPPING.md)** - Security concepts integration
@@ -45,7 +51,11 @@ SMS/
 │   │   ├── elgamal.py            # ElGamal & KDC
 │   │   ├── crypto_math.py        # Math primitives
 │   │   ├── storage.py            # Encrypted storage
-│   │   └── security_utils.py     # Security helpers
+│   │   ├── security_utils.py     # Security helpers
+│   │   ├── lab12_key_exchange.py # Diffie-Hellman (Lab 12)
+│   │   ├── lab13_aead.py         # AEAD (Lab 13)
+│   │   ├── lab14_km.py           # Key Management (Lab 14)
+│   │   └── lab15_postquantum.py  # Post-Quantum & Forward Secrecy (Lab 15)
 │   │
 │   └── network/                  # Network modules
 │       ├── server.py             # Multi-user server
@@ -63,12 +73,20 @@ SMS/
 │   ├── test_crypto_math.py
 │   ├── test_hashing.py
 │   ├── test_modern_ciphers.py
-│   └── test_lab_concepts.py
+│   ├── test_lab_concepts.py
+│   ├── test_lab12.py             # Lab 12 tests
+│   ├── test_lab13.py             # Lab 13 tests
+│   ├── test_lab14.py             # Lab 14 tests
+│   └── test_lab15.py             # Lab 15 tests
 │
 ├── examples/                     # Example scripts
 │   ├── demo_storage.py           # Storage demo
 │   ├── test_storage.py           # Storage tests
-│   └── verify_fix.py             # Verification
+│   ├── verify_fix.py             # Verification
+│   ├── demo_lab12.py             # DH key exchange demo
+│   ├── demo_lab13.py             # AEAD demo
+│   ├── demo_lab14.py             # Key management demo
+│   └── demo_lab15.py             # Post-quantum & forward secrecy demo
 │
 ├── docs/                         # Documentation
 │   ├── guides/                   # User guides
