@@ -362,6 +362,7 @@ python tests/test_lab_concepts.py
 ## Documentation
 
 ### Quick Links
+- [Project Synopsis](docs/PROJECT_SYNOPSIS.md)
 - [Quick Start Guide](docs/guides/QUICKSTART.md)
 - [Network Setup](docs/guides/NETWORK_GUIDE.md)
 - [Storage Security](docs/guides/STORAGE.md)
@@ -370,7 +371,7 @@ python tests/test_lab_concepts.py
 - [Documentation Hub](docs/INDEX.md)
 
 ### Key Documents
-- **For Students**: Start with [QUICKSTART.md](docs/guides/QUICKSTART.md)
+- **For Students**: Start with [PROJECT_SYNOPSIS.md](docs/PROJECT_SYNOPSIS.md), then [QUICKSTART.md](docs/guides/QUICKSTART.md)
 - **For Security Details**: Read [STORAGE.md](docs/guides/STORAGE.md)
 - **For Lab Concepts**: See [LAB_MAPPING.md](docs/api/LAB_MAPPING.md)
 - **For Implementation**: Check [LAB_CONCEPTS_IMPLEMENTATION.md](docs/LAB_CONCEPTS_IMPLEMENTATION.md)
