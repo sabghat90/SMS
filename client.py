@@ -2,7 +2,6 @@
 Secure Messaging System - Client
 Network client for connecting to the messaging server
 Run this in separate terminals for different users
-Now with Labs 12-15 security: DH key exchange, AEAD, key rotation, forward secrecy
 """
 
 import socket
@@ -29,7 +28,7 @@ class MessageClient:
         self.session_id = None
         self.running = False
         
-        # Labs 12-15: Secure protocol for DH handshake, AEAD, key rotation, forward secrecy
+        # Secure protocol for DH handshake, AEAD, key rotation, forward secrecy
         self.protocol = SecureProtocol(is_server=False)
         self.secure_session_id = None
         self.secure_mode = False
@@ -37,7 +36,7 @@ class MessageClient:
         self.notification_thread = None
     
     def connect(self):
-        """Connect to server and establish secure session (Labs 12-15)"""
+        """Connect to server and establish secure session"""
         try:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.connect((self.host, self.port))
@@ -55,7 +54,7 @@ class MessageClient:
             return False
     
     def disconnect(self):
-        """Disconnect from server and destroy session (Lab 15: Forward Secrecy)"""
+        """Disconnect from server and destroy session"""
         self.running = False
         
         if self.connected and self.username:
@@ -64,7 +63,7 @@ class MessageClient:
             else:
                 self._send_request({'command': 'LOGOUT'})
         
-        # Lab 15: Destroy session for forward secrecy
+        # Destroy session for forward secrecy
         if self.secure_session_id and self.secure_session_id in self.protocol.sessions:
             self.protocol.destroy_session(self.secure_session_id)
             print("\n[Security] Session destroyed - forward secrecy achieved")
@@ -76,14 +75,12 @@ class MessageClient:
                 pass
         
         self.connected = False
-        print("\n✓ Disconnected from server")
+        print("\nDisconnected from server")
     
     def _establish_secure_session(self):
-        """Establish secure session using DH key exchange (Lab 12 + Lab 15)"""
+        """Establish secure session using DH key exchange"""
         try:
             print("\n[Security] Establishing secure session...")
-            print("  • Lab 12: Diffie-Hellman key exchange")
-            print("  • Lab 15: Ephemeral keys for forward secrecy")
             
             # Create session and initiate handshake
             self.secure_session_id = f"client-{secrets.token_hex(8)}"
@@ -108,7 +105,7 @@ class MessageClient:
                 print(f"\n✓ Secure transport layer established!")
                 print(f"  Session ID: {self.secure_session_id}")
                 print(f"  Session key: {session_key.hex()[:40]}...")
-                print(f"\n[Security] Transport Layer: AEAD encrypted (Lab 13)")
+                print(f"\n[Security] Transport Layer: AEAD encrypted")
                 print(f"[Security] Message Layer: You can choose classical ciphers")
                 print(f"\nCombined Mode: Secure transport + Educational ciphers")
                 
@@ -151,7 +148,7 @@ class MessageClient:
             return False
     
     def _send_secure_command(self, command):
-        """Send command encrypted with AEAD (Lab 13)"""
+        """Send command encrypted with AEAD"""
         try:
             if not self.secure_mode:
                 # Fallback to regular send
@@ -160,14 +157,14 @@ class MessageClient:
             # Convert command to JSON
             command_json = json.dumps(command)
             
-            # Encrypt with AEAD (Lab 13)
+            # Encrypt with AEAD
             encrypted = self.protocol.send_secure_message(
                 self.secure_session_id,
                 command_json,
                 {'command': command.get('command')}
             )
             
-            # Check if key rotation needed (Lab 14)
+            # Check if key rotation needed
             if encrypted.get('type') == 'KEY_ROTATION_REQUIRED':
                 print("\n[Security] Key rotation needed - rotating keys...")
                 self._rotate_keys()
@@ -223,7 +220,7 @@ class MessageClient:
             return {'status': 'error', 'message': f'Decryption error: {str(e)}'}
     
     def _rotate_keys(self):
-        """Perform key rotation (Lab 14 + Lab 15)"""
+        """Perform key rotation"""
         try:
             print("[Security] Initiating key rotation...")
             
@@ -299,10 +296,6 @@ class MessageClient:
                     print(f"\n{response['message']} (Secure Mode)")
                     print(f"Welcome, {self.username}!")
                     print(f"\n[Security] Logged in with:")
-                    print(f"  • Lab 12: Session key from DH exchange")
-                    print(f"  • Lab 13: All messages encrypted with AEAD")
-                    print(f"  • Lab 14: Automatic key rotation enabled")
-                    print(f"  • Lab 15: Forward secrecy on disconnect")
                 else:
                     print(f"\n{response['message']}")
                     print(f"Welcome, {self.username}!")
