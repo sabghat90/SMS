@@ -65,9 +65,8 @@ class MessageServer:
             return
         
         demo_users = [
-            ("alice", "alice123", "alice@example.com"),
-            ("bob", "bob123", "bob@example.com"),
-            ("charlie", "charlie123", "charlie@example.com"),
+            ("sabghat", "sabghat123", "sabghat@example.com"),
+            ("arsalan", "arsalan123", "arsalan@example.com"),
         ]
         
         print("Setting up demo users...")
@@ -134,11 +133,11 @@ class MessageServer:
         
         try:
             # Set socket timeout to prevent hanging
-            client_socket.settimeout(30.0)
+            client_socket.settimeout(10.0)
             
             while self.running:
                 try:
-                    data = client_socket.recv(16384)  # Increased buffer for encrypted data
+                    data = client_socket.recv(32768)  # Increased buffer for encrypted data
                     if not data:
                         break
                     
@@ -157,7 +156,7 @@ class MessageServer:
                     
                     # Handle AEAD encrypted messages
                     elif msg_type == 'SECURE_MESSAGE' and secure_mode:
-                        response = self._handle_secure_message(request, session_id)
+                        response = self._handle_secure_message(request, session_id, client_socket)
                         self._send_response(client_socket, response)
                         continue
                     
@@ -247,7 +246,7 @@ class MessageServer:
         except Exception as e:
             return {'status': 'error', 'message': f'Handshake failed: {str(e)}'}
     
-    def _handle_secure_message(self, request, session_id):
+    def _handle_secure_message(self, request, session_id, client_socket=None):
         """Handle secure encrypted message"""
         try:
             if session_id not in self.protocol.sessions:
@@ -258,7 +257,7 @@ class MessageServer:
             command_data = json.loads(decrypted)
             
             # Process the command
-            response = self._process_command(command_data, session_id)
+            response = self._process_command(command_data, session_id, client_socket)
             
             # Encrypt the response
             response_json = json.dumps(response)
@@ -279,12 +278,14 @@ class MessageServer:
         except Exception as e:
             return {'status': 'error', 'message': f'Key rotation failed: {str(e)}'}
     
-    def _process_command(self, request, session_id):
+    def _process_command(self, request, session_id, client_socket=None):
         """Process command (for both secure and regular modes)"""
         command = request.get('command')
         
         if command == 'LOGIN':
-            return self._handle_login(request, None, session_id)
+            return self._handle_login(request, client_socket, session_id)
+        elif command == 'REGISTER':
+            return self._handle_register(request)
         elif command == 'SEND_MESSAGE':
             return self._handle_send_message(request)
         elif command == 'GET_MESSAGES':
@@ -367,33 +368,45 @@ class MessageServer:
         if not self.kdc.is_user_registered(receiver):
             return {'status': 'error', 'message': f"User '{receiver}' not found"}
         
-        message_hash = MessageIntegrity.compute_hash(plaintext)
-        
         try:
+            ciphertext = None
+            normalized_plaintext = plaintext  # Track the normalized version for hash
+            
             if encryption_method == 'Caesar':
                 shift = encryption_params.get('shift', 3)
                 cipher = CaesarCipher(shift=shift)
                 ciphertext = cipher.encrypt(plaintext)
+                # Caesar converts to uppercase, so hash the uppercase version
+                normalized_plaintext = plaintext.upper()
             
             elif encryption_method == 'Vigenere':
                 key = encryption_params.get('key', 'KEY')
                 cipher = VigenereCipher(key=key)
                 ciphertext = cipher.encrypt(plaintext)
+                # Vigenere preserves case, use original
+                normalized_plaintext = plaintext
             
             elif encryption_method == 'XOR':
                 key = encryption_params.get('key')
                 cipher = XORStreamCipher(key=key if key else None)
                 ciphertext = cipher.encrypt(plaintext)
                 encryption_params['key_hex'] = cipher.get_key_hex()
+                # XOR preserves original, use original
+                normalized_plaintext = plaintext
             
             elif encryption_method == 'Block':
                 key = encryption_params.get('key')
                 cipher = MiniBlockCipher(key=key if key else None)
                 ciphertext = cipher.encrypt(plaintext)
                 encryption_params['key_hex'] = cipher.get_key_hex()
+                # Block cipher preserves original, use original
+                normalized_plaintext = plaintext
             
             else:
                 return {'status': 'error', 'message': 'Invalid encryption method'}
+            
+            # Compute hash on the normalized plaintext (after cipher transformations)
+            message_hash = MessageIntegrity.compute_hash(normalized_plaintext)
             
             # Only lock for blockchain operations (minimized lock time)
             with self.lock:

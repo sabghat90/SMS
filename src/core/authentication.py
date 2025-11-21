@@ -50,8 +50,8 @@ class UserAuthentication:
         if username in self.users:
             return False, "Username already exists"
         
-        if len(password) < 4:
-            return False, "Password must be at least 4 characters"
+        if len(password) < 6:
+            return False, "Password must be at least 6 characters"
         
         self.users[username] = {
             'password': self._hash_password(password),

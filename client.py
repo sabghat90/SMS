@@ -102,7 +102,7 @@ class MessageClient:
                 self.secure_mode = True
                 
                 session_key = self.protocol.sessions[self.secure_session_id].session_key
-                print(f"\n✓ Secure transport layer established!")
+                print(f"\nSecure transport layer established!")
                 print(f"  Session ID: {self.secure_session_id}")
                 print(f"  Session key: {session_key.hex()[:40]}...")
                 print(f"\n[Security] Transport Layer: AEAD encrypted")
@@ -178,17 +178,26 @@ class MessageClient:
             print(f"\nError sending secure command: {e}")
             return False
     
-    def _receive_response(self, timeout=10):
+    def _receive_response(self, timeout=15):
         """Receive response from server"""
         try:
             # Temporarily disable notification listener during request/response
             original_timeout = self.socket.gettimeout()
             self.socket.settimeout(timeout)
-            data = self.socket.recv(16384)  # Increased for encrypted data
+            data = self.socket.recv(32768)  # Increased for encrypted data
             self.socket.settimeout(original_timeout)
             
             if data:
                 response = json.loads(data.decode('utf-8'))
+                
+                # Check if it's a notification
+                if response.get('type') == 'NEW_MESSAGE':
+                    print(f"\n\n[NOTIFICATION] New message from {response['from']}!")
+                    print("Type '2' to view messages\n")
+                    print("> ", end='', flush=True)
+                    # After showing notification, receive the actual response
+                    return self._receive_response(timeout)
+                
                 return response
             return None
         except socket.timeout:
@@ -196,7 +205,7 @@ class MessageClient:
         except Exception as e:
             return {'status': 'error', 'message': f'Error: {str(e)}'}
     
-    def _receive_secure_response(self, timeout=10):
+    def _receive_secure_response(self, timeout=15):
         """Receive and decrypt response (Lab 13: AEAD)"""
         try:
             encrypted_response = self._receive_response(timeout)
@@ -249,25 +258,28 @@ class MessageClient:
             return False
     
     def _listen_for_notifications(self):
-        """Listen for server notifications in background"""
-        while self.running and self.username:
-            try:
-                self.socket.settimeout(1.0)
-                data = self.socket.recv(4096)
-                
-                if data:
-                    try:
-                        notification = json.loads(data.decode('utf-8'))
-                        if notification.get('type') == 'NEW_MESSAGE':
-                            print(f"\n\nNew message from {notification['from']}!")
-                            print("Type '2' to view messages\n")
-                            print("> ", end='', flush=True)
-                    except:
-                        pass
-            except socket.timeout:
-                continue
-            except:
-                break
+        """Listen for server notifications in background - DEPRECATED"""
+        # This method is no longer used. Notifications are now handled
+        # inline in _receive_response to avoid socket conflicts.
+        pass
+        # while self.running and self.username:
+        #     try:
+        #         self.socket.settimeout(1.0)
+        #         data = self.socket.recv(4096)
+        #         
+        #         if data:
+        #             try:
+        #                 notification = json.loads(data.decode('utf-8'))
+        #                 if notification.get('type') == 'NEW_MESSAGE':
+        #                     print(f"\n\nNew message from {notification['from']}!")
+        #                     print("Type '2' to view messages\n")
+        #                     print("> ", end='', flush=True)
+        #             except:
+        #                 pass
+        #     except socket.timeout:
+        #         continue
+        #     except:
+        #         break
     
     def login(self):
         """Login to server"""
@@ -300,11 +312,7 @@ class MessageClient:
                     print(f"\n{response['message']}")
                     print(f"Welcome, {self.username}!")
                 
-                self.notification_thread = threading.Thread(
-                    target=self._listen_for_notifications,
-                    daemon=True
-                )
-                self.notification_thread.start()
+                # Notifications are now handled inline in _receive_response
                 
                 return True
             else:

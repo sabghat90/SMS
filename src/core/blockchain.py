@@ -219,7 +219,17 @@ class MessageBlockchain:
             previous_block = self.chain[i - 1]
             
             # Recalculate hash to verify integrity
-            if current_block.hash != current_block.calculate_hash():
+            # Create a temporary block to recalculate the hash properly
+            temp_block = Block(
+                index=current_block.index,
+                timestamp=current_block.timestamp,
+                data=current_block.data,
+                previous_hash=current_block.previous_hash
+            )
+            temp_block.nonce = current_block.nonce
+            recalculated_hash = temp_block.calculate_hash()
+            
+            if current_block.hash != recalculated_hash:
                 return (False, f"Block {i} has invalid hash")
             
             # Check chain linkage
